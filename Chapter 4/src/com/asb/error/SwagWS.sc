@@ -45,5 +45,5 @@ Either.sequenceAsTraverse(List(Right(5), Left(new Exception("Screw You 2")), Lef
 PersonBuilder.mkPerson("Arjun", 27)
 PersonBuilder.mkPerson("Asdf", -27)
 
-PersonBuilder.mkBetterPerson("Arjun", 27)
-PersonBuilder.mkBetterPerson("", -27)
+PersonBuilder.mkMuchBetterPerson("Arjun", 27)
+PersonBuilder.mkMuchBetterPerson("", -27)
