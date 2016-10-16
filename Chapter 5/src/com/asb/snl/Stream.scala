@@ -38,6 +38,15 @@ sealed trait Stream[+A] {
     }
     loop(this, 0, Stream()).reverse()
   }
+
+  def drop(n: Int): Stream[A] = {
+    @tailrec
+    def loop(tl: Stream[A], c: Int): Stream[A] = tl match {
+      case Empty => tl
+      case Cons(h, t) => if (c < n) loop(t(), c + 1) else tl
+    }
+    loop(this, 0)
+  }
 }
 
 case object Empty extends Stream[Nothing]

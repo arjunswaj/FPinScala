@@ -6,3 +6,6 @@ stream.toList
 stream.take(2)
 stream.take(2).reverse()
 stream.take(2).toList
+
+stream.drop(2)
+stream.drop(2).toList
