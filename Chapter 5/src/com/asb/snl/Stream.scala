@@ -20,6 +20,15 @@ sealed trait Stream[+A] {
     }
     loop(this, List()).reverse
   }
+
+  def reverse(): Stream[A] = {
+    def loop(tl: Stream[A], acc: => Stream[A]): Stream[A] = tl match {
+      case Empty => acc
+      case Cons(h, t) => loop(t(), Cons(h, () => acc))
+    }
+    loop(this, Stream())
+  }
+
 }
 
 case object Empty extends Stream[Nothing]
