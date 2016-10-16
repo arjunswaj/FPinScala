@@ -22,6 +22,7 @@ sealed trait Stream[+A] {
   }
 
   def reverse(): Stream[A] = {
+    @tailrec
     def loop(tl: Stream[A], acc: => Stream[A]): Stream[A] = tl match {
       case Empty => acc
       case Cons(h, t) => loop(t(), Cons(h, () => acc))
@@ -29,6 +30,14 @@ sealed trait Stream[+A] {
     loop(this, Stream())
   }
 
+  def take(n: Int): Stream[A] = {
+    @tailrec
+    def loop(tl: Stream[A], c: Int, acc: => Stream[A]): Stream[A] = tl match {
+      case Empty => acc
+      case Cons(h, t) => if (c < n) loop(t(), c + 1, Cons(h, () => acc)) else acc
+    }
+    loop(this, 0, Stream()).reverse()
+  }
 }
 
 case object Empty extends Stream[Nothing]
