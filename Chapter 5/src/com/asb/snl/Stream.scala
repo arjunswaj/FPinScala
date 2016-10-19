@@ -30,7 +30,14 @@ sealed trait Stream[+A] {
     loop(this, Stream())
   }
 
-  def take(n: Int): Stream[A] = {
+  def take(n: Int): Stream[A] = this match {
+    case Cons(h, t) if n > 1 => Stream.cons(h(), t().take(n - 1))
+    case Cons(h, _) if n == 1 => Stream.cons(h(), Stream.empty)
+    case _ => Stream.empty
+  }
+
+  // This is incorrect, not lazy
+  def take2(n: Int): Stream[A] = {
     @tailrec
     def loop(tl: Stream[A], c: Int, acc: => Stream[A]): Stream[A] = tl match {
       case Empty => acc
