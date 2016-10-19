@@ -1,6 +1,6 @@
 import com.asb.snl.Stream
 
-val stream = Stream(1, 2, 3, 4, 5)
+val stream = Stream(1, 2, 3, 4, 5, 6)
 stream.toList
 
 stream.take(2)
@@ -27,3 +27,6 @@ Stream().headOptionByFolding
 
 stream.map(a => a + 5)
 stream.map(a => a + 5).toList
+
+stream.filter(a => 0 == a % 2)
+stream.filter(a => 0 == a % 2).toList
