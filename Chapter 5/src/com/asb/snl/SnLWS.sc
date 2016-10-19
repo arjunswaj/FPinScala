@@ -24,3 +24,6 @@ stream.takeWhileByFolding(n => n < 4).toList
 
 stream.headOptionByFolding
 Stream().headOptionByFolding
+
+stream.map(a => a + 5)
+stream.map(a => a + 5).toList
