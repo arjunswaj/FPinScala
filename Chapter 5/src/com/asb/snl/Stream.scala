@@ -61,7 +61,13 @@ sealed trait Stream[+A] {
     loop(this, 0)
   }
 
-  def takeWhile(p: A => Boolean): Stream[A] = {
+  def takeWhile(p: A => Boolean): Stream[A] = this match {
+    case Cons(h, t) if p(h()) => Stream.cons(h(), t().takeWhile(p))
+    case _ => Stream.empty
+  }
+
+  // Again, incorrect take while, it ain't lazy
+  def takeWhile2(p: A => Boolean): Stream[A] = {
     @tailrec
     def loop(tl: Stream[A], acc: => Stream[A]): Stream[A] = tl match {
       case Empty => acc
