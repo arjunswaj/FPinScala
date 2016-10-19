@@ -46,7 +46,13 @@ sealed trait Stream[+A] {
     loop(this, 0, Stream()).reverse()
   }
 
-  def drop(n: Int): Stream[A] = {
+  def drop(n: Int): Stream[A] = this match {
+    case Cons(h, t) if n > 0 => t().drop(n - 1)
+    case _ => this
+  }
+
+  // Okay, but you don't need a loop, it's already tailrec
+  def drop2(n: Int): Stream[A] = {
     @tailrec
     def loop(tl: Stream[A], c: Int): Stream[A] = tl match {
       case Empty => tl
