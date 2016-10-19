@@ -18,3 +18,6 @@ stream.existByFolding(p => p < -3)
 
 stream.forAll(p => p <= 6)
 stream.forAll(p => p < 2)
+
+stream.takeWhileByFolding(n => n < 3)
+stream.takeWhileByFolding(n => n < 4).toList
