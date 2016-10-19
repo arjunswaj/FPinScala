@@ -69,6 +69,8 @@ sealed trait Stream[+A] {
 
   def existByFolding(p: A => Boolean): Boolean = foldRight(false)((a, b) => p(a) || b)
 
+  def forAll(p: A => Boolean): Boolean = foldRight(true)((a, b) => p(a) && b)
+
 }
 
 case object Empty extends Stream[Nothing]
