@@ -35,3 +35,5 @@ val stream2 = Stream(10, 9, 8, 7, 6, 5)
 stream.append(stream2)
 stream.append(stream2).toList
 
+stream.flatMap(t => Stream(t + 10, t + 20, t + 30))
+stream.flatMap(t => Stream(t + 10, t + 20, t + 30)).toList
