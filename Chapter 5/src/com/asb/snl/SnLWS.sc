@@ -30,3 +30,8 @@ stream.map(a => a + 5).toList
 
 stream.filter(a => 0 == a % 2)
 stream.filter(a => 0 == a % 2).toList
+
+val stream2 = Stream(10, 9, 8, 7, 6, 5)
+stream.append(stream2)
+stream.append(stream2).toList
+
