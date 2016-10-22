@@ -55,3 +55,10 @@ constant(5).take(5).toList
 
 def from(n: Int): Stream[Int] = Stream.cons[Int](n, from(n + 1))
 from(5).take(17).toList
+
+def fibs(): Stream[Int] = {
+  def gen(cur: Int, next: Int): Stream[Int] =
+    Stream.cons(cur, gen(next, cur + next))
+  gen(0, 1)
+}
+fibs().take(10).toList
