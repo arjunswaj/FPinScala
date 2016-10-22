@@ -52,3 +52,6 @@ def constant[A](a: A): Stream[A] = {
   c
 }
 constant(5).take(5).toList
+
+def from(n: Int): Stream[Int] = Stream.cons[Int](n, from(n + 1))
+from(5).take(17).toList
