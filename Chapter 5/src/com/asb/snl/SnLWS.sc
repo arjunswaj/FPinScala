@@ -37,3 +37,5 @@ stream.append(stream2).toList
 
 stream.flatMap(t => Stream(t + 10, t + 20, t + 30))
 stream.flatMap(t => Stream(t + 10, t + 20, t + 30)).toList
+
+stream.find(p => 0 == p % 3)
