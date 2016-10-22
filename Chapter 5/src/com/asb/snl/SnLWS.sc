@@ -46,3 +46,9 @@ ones.take(5).toList
 ones.exists(_ % 2 != 0)
 ones.map(_ + 1).exists(_ % 2 == 0)
 ones.forAll(_ != 1)
+
+def constant[A](a: A): Stream[A] = {
+  lazy val c: Stream[A] = Stream.cons[A](a, c)
+  c
+}
+constant(5).take(5).toList
