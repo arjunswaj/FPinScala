@@ -42,3 +42,7 @@ stream.find(p => 0 == p % 3)
 
 val ones: Stream[Int] = Stream.cons(1, ones)
 ones.take(5).toList
+
+ones.exists(_ % 2 != 0)
+ones.map(_ + 1).exists(_ % 2 == 0)
+ones.forAll(_ != 1)
