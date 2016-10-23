@@ -47,41 +47,10 @@ ones.exists(_ % 2 != 0)
 ones.map(_ + 1).exists(_ % 2 == 0)
 ones.forAll(_ != 1)
 
-def constant[A](a: A): Stream[A] = {
-  lazy val c: Stream[A] = Stream.cons[A](a, c)
-  c
-}
-constant(5).take(5).toList
 
-def from(n: Int): Stream[Int] = Stream.cons[Int](n, from(n + 1))
-from(5).take(17).toList
-
-def fibs(): Stream[Int] = {
-  def gen(cur: Int, next: Int): Stream[Int] =
-    Stream.cons(cur, gen(next, cur + next))
-  gen(0, 1)
-}
-fibs().take(10).toList
-
-def unfold3[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
-  case Some((a, s)) => Stream.cons(a, unfold3(s)(f))
-  case None => Stream.empty
-}
-
-def unfold2[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] =
-  f(z).map(k => Stream.cons(k._1, unfold2(k._2)(f))).getOrElse(Stream.empty)
-
-def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] =
-  f(z).foldRight(Stream.empty[A])((a, b) => Stream.cons(a._1, unfold(a._2)(f)))
-
-def constantAsUnfold[A](a: A): Stream[A] = unfold(a)(s => Some((a, a)))
-constantAsUnfold("Hello").take(5).toList
-
-
-def fromAsUnfold(n: Int): Stream[Int] = unfold(n)(s => Some((s, s + 1)))
-fromAsUnfold(7).take(10).toList
-
-def fibsAsUnfold(): Stream[Int] =
-  unfold((0, 1))(s => Some(s._1, (s._2, s._1 + s._2)))
-
-fibsAsUnfold().take(10).toList
+Stream.constant(5).take(5).toList
+Stream.from(5).take(17).toList
+Stream.fibs().take(10).toList
+Stream.constantAsUnfold("Hello").take(5).toList
+Stream.fromAsUnfold(7).take(10).toList
+Stream.fibsAsUnfold().take(10).toList
