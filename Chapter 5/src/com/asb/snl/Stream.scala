@@ -96,6 +96,11 @@ sealed trait Stream[+A] {
 
   def map[B](p: A => B): Stream[B] = foldRight(Stream.empty[B])((a, b) => Stream.cons(p(a), b))
 
+  def mapAsUnfold[B](p: A => B): Stream[B] = Stream.unfold(this) {
+    case Cons(h, t) => Some((p(h()), t()))
+    case _ => None
+  }
+
   def filter(p: A => Boolean): Stream[A] = foldRight(Stream.empty[A])((a, b) => if (p(a)) Stream.cons(a, b) else b)
 
   def append[B >: A](s2: => Stream[B]): Stream[B] = foldRight(s2)((a, b) => Stream.cons(a, b))

@@ -54,3 +54,5 @@ Stream.fibs().take(10).toList
 Stream.constantAsUnfold("Hello").take(5).toList
 Stream.fromAsUnfold(7).take(10).toList
 Stream.fibsAsUnfold().take(10).toList
+
+stream.mapAsUnfold(k => k + 15).toList
