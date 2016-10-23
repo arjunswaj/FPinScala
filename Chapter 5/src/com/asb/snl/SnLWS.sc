@@ -56,3 +56,4 @@ Stream.fromAsUnfold(7).take(10).toList
 Stream.fibsAsUnfold().take(10).toList
 
 stream.mapAsUnfold(k => k + 15).toList
+stream.takeWhileAsUnfold(n => n < 4).toList

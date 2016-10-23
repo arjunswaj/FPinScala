@@ -66,6 +66,12 @@ sealed trait Stream[+A] {
     case _ => Stream.empty
   }
 
+  def takeWhileAsUnfold(p: A => Boolean): Stream[A] = Stream.unfold(this) {
+    case Cons(h, t) if p(h()) => Some((h(), t()))
+    case _ => None
+  }
+
+
   // Again, incorrect take while, it ain't lazy
   def takeWhile2(p: A => Boolean): Stream[A] = {
     @tailrec
