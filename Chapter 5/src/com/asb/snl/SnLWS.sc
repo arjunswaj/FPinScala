@@ -64,7 +64,7 @@ def fibs(): Stream[Int] = {
 fibs().take(10).toList
 
 def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
-  case Some((a, s)) => Stream.cons(a, unfold(z)(f))
+  case Some((a, s)) => Stream.cons(a, unfold(s)(f))
   case None => Stream.empty
 }
 
