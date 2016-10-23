@@ -67,3 +67,6 @@ def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
   case Some((a, s)) => Stream.cons(a, unfold(z)(f))
   case None => Stream.empty
 }
+
+def constantAsUnfold[A](a: A): Stream[A] = unfold(a)(s => Some((a, a)))
+constantAsUnfold("Hello").take(5).toList
