@@ -63,10 +63,14 @@ def fibs(): Stream[Int] = {
 }
 fibs().take(10).toList
 
-def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
-  case Some((a, s)) => Stream.cons(a, unfold(s)(f))
+def unfold2[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
+  case Some((a, s)) => Stream.cons(a, unfold2(s)(f))
   case None => Stream.empty
 }
+
+def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] =
+  f(z).map(k => Stream.cons(k._1, unfold(k._2)(f))).getOrElse(Stream.empty)
+
 
 def constantAsUnfold[A](a: A): Stream[A] = unfold(a)(s => Some((a, a)))
 constantAsUnfold("Hello").take(5).toList
