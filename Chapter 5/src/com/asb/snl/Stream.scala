@@ -36,6 +36,12 @@ sealed trait Stream[+A] {
     case _ => Stream.empty
   }
 
+  def takeAsUnfold(n: Int): Stream[A] = Stream.unfold((this, n)) {
+    case (Cons(h, t), k) if k > 0 => Some((h(), (t(), k - 1)))
+    case _ => None
+  }
+
+
   // This is incorrect, not lazy
   def take2(n: Int): Stream[A] = {
     @tailrec
