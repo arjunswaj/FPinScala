@@ -74,3 +74,8 @@ constantAsUnfold("Hello").take(5).toList
 
 def fromAsUnfold(n: Int): Stream[Int] = unfold(n)(s => Some((s, s + 1)))
 fromAsUnfold(7).take(10).toList
+
+def fibsAsUnfold(): Stream[Int] =
+  unfold((0, 1))(s => Some(s._1, (s._2, s._1 + s._2)))
+
+fibsAsUnfold().take(10).toList
