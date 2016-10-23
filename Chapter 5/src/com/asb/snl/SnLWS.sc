@@ -60,3 +60,6 @@ stream.takeWhileAsUnfold(n => n < 4).toList
 stream.takeAsUnfold(2).toList
 
 stream.zipWith(stream2)((a, b) => a * b).toList
+
+stream.zipAll(stream2.take(2)).toList
+stream.take(3).zipAll(stream2).toList
