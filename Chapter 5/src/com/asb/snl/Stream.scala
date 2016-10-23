@@ -160,6 +160,8 @@ sealed trait Stream[+A] {
       (b2, Stream.cons(b2, p1._2))
     })._2
 
+  def tailsAsScanRight: Stream[Stream[A]] = scanRight(Stream.empty[A])((a, b) => Stream.cons(a, b))
+
 }
 
 case object Empty extends Stream[Nothing]

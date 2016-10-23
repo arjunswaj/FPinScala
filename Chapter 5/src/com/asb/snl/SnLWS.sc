@@ -69,3 +69,5 @@ stream.tails.flatMap(t => t).toList
 stream.hasSubsequence(Stream(4, 5))
 
 stream.scanRight(0)((a, b) => a + b).toList
+
+stream.tailsAsScanRight.flatMap(t => t).toList
