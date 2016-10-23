@@ -70,3 +70,7 @@ def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
 
 def constantAsUnfold[A](a: A): Stream[A] = unfold(a)(s => Some((a, a)))
 constantAsUnfold("Hello").take(5).toList
+
+
+def fromAsUnfold(n: Int): Stream[Int] = unfold(n)(s => Some((s, s + 1)))
+fromAsUnfold(7).take(10).toList
