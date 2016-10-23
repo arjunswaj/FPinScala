@@ -1,6 +1,7 @@
 package com.asb.snl
 
 import scala.annotation.tailrec
+import scala.collection.immutable.Stream.cons
 
 /**
   * Stream.
@@ -145,6 +146,20 @@ sealed trait Stream[+A] {
 
   def hasSubsequence[B](s: Stream[B]): Boolean =
     tails exists (t => t startsWith s)
+
+  def scanRight[B](z: => B)(f: (A, => B) => B): Stream[B] = this match {
+    case Cons(h, t) => Stream.cons(f(h(), t().foldRight(z)(f)), t().scanRight(z)(f))
+    case _ => Stream(z)
+  }
+
+  def scanRight2[B](z: B)(f: (A, => B) => B): Stream[B] =
+    foldRight((z, Stream(z)))((a, p0) => {
+      // p0 is passed by-name and used in by-name args in f and cons. So use lazy val to ensure only one evaluation...
+      lazy val p1 = p0
+      val b2 = f(a, p1._1)
+      (b2, Stream.cons(b2, p1._2))
+    })._2
+
 }
 
 case object Empty extends Stream[Nothing]
