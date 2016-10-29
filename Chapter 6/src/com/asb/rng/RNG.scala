@@ -35,7 +35,7 @@ object random {
 
   def nonNegativeInt(rng: RNG): (Int, RNG) = {
     rng.nextInt match {
-      case (i, rng2) if i < 0 => (-i, rng2)
+      case (i, rng2) if i < 0 => (-(i + 1), rng2)
       case (i, rng2) => (i, rng2)
     }
   }
