@@ -40,4 +40,9 @@ object random {
     }
   }
 
+  def double(rng: RNG): (Double, RNG) = {
+    val (i, rng2) = nonNegativeInt(rng)
+    (i / (Int.MaxValue.toDouble + 1), rng2)
+  }
+
 }

@@ -10,3 +10,5 @@ val ((m1, m2), rng4) = random.randomPair(rng)
 random.nonNegativeInt(random
   .nonNegativeInt(random
     .nonNegativeInt(rng)._2)._2)
+
+random.double(rng)
