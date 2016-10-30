@@ -128,4 +128,10 @@ object random {
       else nonNegativeLessThan(n)(rng2) // Note that there is an errata in the book and they use rng instead of rng2
   }
 
+  def flatMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] = {
+    rng =>
+      val (a, b) = f(rng)
+      g(a)(b)
+  }
+
 }
