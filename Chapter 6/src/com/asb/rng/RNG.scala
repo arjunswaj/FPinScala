@@ -114,9 +114,18 @@ object random {
 
   // This will be reverse, mind it. This is the book solution.
   def sequence2[A](fs: List[Rand[A]]): Rand[List[A]] =
-    fs.foldRight(unit(List[A]()))((acc, t) => map2(acc, t)(_ :: _))
+  fs.foldRight(unit(List[A]()))((acc, t) => map2(acc, t)(_ :: _))
 
   def intsAsSeq(count: Int)(rng: RNG): (List[Int], RNG) =
     sequence[Int](List.fill(count)(x => x.nextInt))(rng)
+
+  def nonNegativeLessThan(n: Int): Rand[Int] = {
+    rng =>
+      val (i, rng2) = nonNegativeInt(rng)
+      val mod = i % n
+      if (i + (n - 1) - mod >= 0)
+        (mod, rng2)
+      else nonNegativeLessThan(n)(rng2) // Note that there is an errata in the book and they use rng instead of rng2
+  }
 
 }
