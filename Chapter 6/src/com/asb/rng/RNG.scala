@@ -134,4 +134,11 @@ object random {
       g(a)(b)
   }
 
+  def nonNegativeLessThanByFlatMap(n: Int): Rand[Int] =
+    flatMap(nonNegativeInt)(i => {
+      val mod = i % n
+      if (i + (n - 1) - mod >= 0) unit(mod)
+      else nonNegativeLessThanByFlatMap(n)
+    })
+
 }
