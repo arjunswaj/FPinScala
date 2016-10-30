@@ -63,4 +63,17 @@ object random {
     ((a._1, b._1, c._1), r3)
   }
 
+  def ints(count: Int)(rng: RNG): (List[Int], RNG) = {
+    def loop(n: Int, acc: List[Int], rng: RNG): (List[Int], RNG) =
+      if (0 >= n)
+        (acc, rng)
+      else {
+        val ni = rng.nextInt
+        loop(n - 1, ni._1 :: acc, ni._2)
+      }
+
+    val (list, r) = loop(count, List(), rng)
+    (list.reverse, r)
+  }
+
 }

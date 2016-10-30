@@ -16,3 +16,5 @@ random.double(rng)
 random.intDouble(rng)
 random.doubleInt(rng)
 random.double3(rng)
+
+random.ints(50)(rng)
