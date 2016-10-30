@@ -45,4 +45,22 @@ object random {
     (i / (Int.MaxValue.toDouble + 1), rng2)
   }
 
+  def intDouble(rng: RNG): ((Int, Double), RNG) = {
+    val (i, rng2) = rng.nextInt
+    val d = i + double(rng2)._1
+    ((i, d), rng2)
+  }
+
+  def doubleInt(rng: RNG): ((Double, Int), RNG) = {
+    val (a, b) = intDouble(rng)
+    (a.swap, b)
+  }
+
+  def double3(rng: RNG): ((Double, Double, Double), RNG) = {
+    val (a, r1) = doubleInt(rng)
+    val (b, r2) = doubleInt(r1)
+    val (c, r3) = doubleInt(r2)
+    ((a._1, b._1, c._1), r3)
+  }
+
 }
