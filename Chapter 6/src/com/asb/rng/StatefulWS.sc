@@ -31,3 +31,5 @@ randIntDouble(rng)
 val randDoubleInt = random.both(random.double, int)
 // The seeds change, for second function, so it is not same as randIntDouble
 randDoubleInt(rng)
+
+random.intsAsSeq(50)(rng)

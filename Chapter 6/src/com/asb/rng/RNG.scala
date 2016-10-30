@@ -103,4 +103,16 @@ object random {
   def both[A, B](ra: Rand[A], rb: Rand[B]): Rand[(A, B)] =
     map2(ra, rb)((_, _))
 
+  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] =
+    rng => {
+      val (list, tx) = fs.foldLeft[(List[A], RNG)]((List(), rng))((a, b) => {
+        val (m, r1) = b(a._2)
+        (m :: a._1, r1)
+      })
+      (list.reverse, tx)
+    }
+
+  def intsAsSeq(count: Int)(rng: RNG): (List[Int], RNG) =
+    sequence[Int](List.fill(count)(x => x.nextInt))(rng)
+
 }
