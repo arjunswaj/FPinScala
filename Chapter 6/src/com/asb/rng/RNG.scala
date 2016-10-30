@@ -89,4 +89,8 @@ object random {
 
   def nonNegativeEven: Rand[Int] =
     map(nonNegativeInt)(n => n - n % 2)
+
+  def doubleElegant(rng: RNG): (Double, RNG) =
+    map(nonNegativeInt)(_ / (Int.MaxValue.toDouble + 1))(rng)
+
 }

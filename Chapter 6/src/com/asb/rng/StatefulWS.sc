@@ -13,6 +13,7 @@ random.nonNegativeInt(random
     .nonNegativeInt(rng)._2)._2)
 
 random.double(rng)
+random.doubleElegant(rng)
 
 random.intDouble(rng)
 random.doubleInt(rng)
