@@ -112,6 +112,10 @@ object random {
       (list.reverse, tx)
     }
 
+  // This will be reverse, mind it. This is the book solution.
+  def sequence2[A](fs: List[Rand[A]]): Rand[List[A]] =
+    fs.foldRight(unit(List[A]()))((acc, t) => map2(acc, t)(_ :: _))
+
   def intsAsSeq(count: Int)(rng: RNG): (List[Int], RNG) =
     sequence[Int](List.fill(count)(x => x.nextInt))(rng)
 
