@@ -1,3 +1,4 @@
+import com.asb.rng.random.Rand
 import com.asb.rng.{SimpleRNG, random}
 
 val rng = SimpleRNG(42)
@@ -18,3 +19,6 @@ random.doubleInt(rng)
 random.double3(rng)
 
 random.ints(50)(rng)
+
+val int: Rand[Int] = _.nextInt
+random.nonNegativeEven(rng)
