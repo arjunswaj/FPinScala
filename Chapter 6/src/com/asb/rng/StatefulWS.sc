@@ -23,3 +23,11 @@ random.ints(50)(rng)
 
 val int: Rand[Int] = _.nextInt
 random.nonNegativeEven(rng)
+
+val randIntDouble: Rand[(Int, Double)] = random.both(int, random.double)
+// Note, this is not same as intDouble as the second function depended on the result of first function there.
+randIntDouble(rng)
+
+val randDoubleInt = random.both(random.double, int)
+// The seeds change, for second function, so it is not same as randIntDouble
+randDoubleInt(rng)
