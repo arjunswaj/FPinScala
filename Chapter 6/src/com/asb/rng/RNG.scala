@@ -205,6 +205,6 @@ object State {
     State(s => (a, s))
 
   def sequence[A](fs: List[Rand[A]]): Rand[List[A]] =
-    fs.foldLeft[Rand[List[A]]](unit(List()))((b, a) => a.map2(b)(_ :: _))
+    fs.reverse.foldLeft[Rand[List[A]]](unit(List()))((b, a) => a.map2(b)(_ :: _))
 
 }
