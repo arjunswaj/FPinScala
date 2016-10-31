@@ -4,3 +4,4 @@ import com.asb.rng.CandyStore._
 val machine = Machine(true, 5, 10)
 val operations = List(Coin, Turn, Coin, Turn, Coin, Turn, Coin, Turn)
 simulateMachine(operations).run(machine)
+elegantSimulateMachine(operations).run(machine)

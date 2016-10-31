@@ -35,4 +35,23 @@ object CandyStore {
       // and map value part to (int, int) from state
       get map (s =>
         (s.coins, s.candies)))
+
+  // Curried function. Takes Input and returns a function
+  // that takes Machine and returns Machine
+  // Same as def update(i: Input)(m: Machine)
+  def update = (i: Input) => (m: Machine) => {
+    (i, m) match {
+      case (_, Machine(_, 0, _)) => m
+      case (Coin, Machine(false, _, _)) => m
+      case (Turn, Machine(true, _, _)) => m
+      case (Coin, Machine(true, candies, coins)) => Machine(locked = false, candies, coins + 1)
+      case (Turn, Machine(false, candies, coins)) => Machine(locked = true, candies - 1, coins)
+    }
+  }
+
+  def elegantSimulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] =
+    for {
+      _ <- sequence(inputs map (i => modify[Machine](update(i))))
+      s <- get
+    } yield (s.coins, s.candies)
 }
