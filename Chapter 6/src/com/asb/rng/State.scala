@@ -48,8 +48,8 @@ object State {
   def unit[S, A](a: A): State[S, A] =
     State(s => (a, s))
 
-  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] =
-    fs.reverse.foldLeft[Rand[List[A]]](unit(List()))((b, a) => a.map2(b)(_ :: _))
+  def sequence[S, A](fs: List[State[S, A]]): State[S, List[A]] =
+    fs.reverse.foldLeft[State[S, List[A]]](unit(List()))((b, a) => a.map2(b)(_ :: _))
 
   def get[S]: State[S, S] = State(s => (s, s))
 
