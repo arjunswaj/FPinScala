@@ -1,5 +1,5 @@
 import com.asb.rng.random.Rand
-import com.asb.rng.{SimpleRNG, random}
+import com.asb.rng.{SimpleRNG, State, random}
 
 val rng = SimpleRNG(42)
 val (n1, rng2) = rng.nextInt
@@ -40,4 +40,22 @@ random.nonNegativeLessThanByFlatMap(6)(rng)
 
 random.rollDie(SimpleRNG(5))._1
 
-random.int(SimpleRNG(5))
+
+State.int.run(rng)
+State.ints(50).run(rng)
+
+val ns: State.Rand[List[Int]] =
+  State.int.flatMap(x =>
+    State.int.flatMap(y =>
+      State.ints(x).map(xs =>
+        xs.map(_ % y)
+      )
+    )
+  )
+
+val ns2: State.Rand[List[Int]] =
+  for {
+    x <- State.int
+    y <- State.int
+    xs <- State.ints(x)
+  } yield xs.map(_ % y)
