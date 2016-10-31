@@ -33,6 +33,7 @@ val randDoubleInt = random.both(random.double, int)
 randDoubleInt(rng)
 
 random.intsAsSeq(50)(rng)
+random.intsAsSeq2(50)(rng)
 
 random.nonNegativeLessThan(6)(rng)
 random.nonNegativeLessThanByFlatMap(6)(rng)

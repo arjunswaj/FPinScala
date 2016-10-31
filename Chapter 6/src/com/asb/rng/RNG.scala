@@ -114,10 +114,13 @@ object random {
 
   // This will be reverse, mind it. This is the book solution.
   def sequence2[A](fs: List[Rand[A]]): Rand[List[A]] =
-  fs.foldRight(unit(List[A]()))((acc, t) => map2(acc, t)(_ :: _))
+  fs.foldRight(unit(List[A]()))((acc, t) => map2AsFlatMap(acc, t)(_ :: _))
 
   def intsAsSeq(count: Int)(rng: RNG): (List[Int], RNG) =
     sequence[Int](List.fill(count)(x => x.nextInt))(rng)
+
+  def intsAsSeq2(count: Int)(rng: RNG): (List[Int], RNG) =
+    sequence2[Int](List.fill(count)(x => x.nextInt))(rng)
 
   def nonNegativeLessThan(n: Int): Rand[Int] = {
     rng =>
@@ -143,5 +146,10 @@ object random {
 
   def mapAsFlatMap[A, B](s: Rand[A])(f: A => B): Rand[B] =
     flatMap(s)(a => unit(f(a)))
+
+  def map2AsFlatMap[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
+    flatMap(ra)(a => {
+      flatMap(rb)(b => unit(f(a, b)))
+    })
 
 }
