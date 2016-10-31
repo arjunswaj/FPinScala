@@ -88,10 +88,10 @@ object random {
     }
 
   def nonNegativeEven: Rand[Int] =
-    map(nonNegativeInt)(n => n - n % 2)
+    mapAsFlatMap(nonNegativeInt)(n => n - n % 2)
 
   def doubleElegant(rng: RNG): (Double, RNG) =
-    map(nonNegativeInt)(_ / (Int.MaxValue.toDouble + 1))(rng)
+    mapAsFlatMap(nonNegativeInt)(_ / (Int.MaxValue.toDouble + 1))(rng)
 
   def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
     rng => {
@@ -140,5 +140,8 @@ object random {
       if (i + (n - 1) - mod >= 0) unit(mod)
       else nonNegativeLessThanByFlatMap(n)
     })
+
+  def mapAsFlatMap[A, B](s: Rand[A])(f: A => B): Rand[B] =
+    flatMap(s)(a => unit(f(a)))
 
 }
