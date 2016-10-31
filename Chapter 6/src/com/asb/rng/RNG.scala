@@ -152,4 +152,6 @@ object random {
       flatMap(rb)(b => unit(f(a, b)))
     })
 
+  def rollDie: Rand[Int] = map(nonNegativeLessThan(6))(_ + 1)
+
 }

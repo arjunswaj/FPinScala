@@ -37,3 +37,5 @@ random.intsAsSeq2(50)(rng)
 
 random.nonNegativeLessThan(6)(rng)
 random.nonNegativeLessThanByFlatMap(6)(rng)
+
+random.rollDie(SimpleRNG(5))._1
