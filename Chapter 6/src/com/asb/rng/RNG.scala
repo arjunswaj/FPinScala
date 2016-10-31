@@ -81,7 +81,7 @@ object random {
   def unit[A](a: A): Rand[A] =
     rng => (a, rng)
 
-  def map[A, B](s: Rand[A])(f: A => B): Rand[B] =
+  def map[S, A, B](s: S => (A, S))(f: A => B): S => (B, S) =
     rng => {
       val (a, rng2) = s(rng)
       (f(a), rng2)
