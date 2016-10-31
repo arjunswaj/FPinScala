@@ -155,3 +155,28 @@ object random {
   def rollDie: Rand[Int] = map(nonNegativeLessThan(6))(_ + 1)
 
 }
+
+case class State[S, +A](run: S => (A, S)) {
+  def map[B](f: A => B): State[S, B] =
+    State(s => (f(run(s)._1), s))
+
+  def map2[B, C](rb: State[S, B])(f: (A, B) => C): State[S, C] =
+    State(s => {
+      val (a, s2) = run(s)
+      val (b, s3) = rb.run(s2)
+      (f(a, b), s3)
+    })
+
+  def flatMap[B](g: A => State[S, B]): State[S, B] =
+    State(s => {
+      val (a, s2) = run(s)
+      g(a).run(s2)
+    })
+}
+
+object State {
+  type Rand[A] = State[RNG, A]
+
+  def unit[S, A](a: A): State[S, A] =
+    State(s => (a, s))
+}
