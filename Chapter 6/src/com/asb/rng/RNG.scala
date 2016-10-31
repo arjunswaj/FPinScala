@@ -21,6 +21,8 @@ case class SimpleRNG(seed: Long) extends RNG {
 
 object random {
 
+  def int: Rand[Int] = rng => rng.nextInt
+
   def sameRandomPair(rng: RNG): (Int, Int) = {
     val (i1, _) = rng.nextInt
     val (i2, _) = rng.nextInt

@@ -39,3 +39,5 @@ random.nonNegativeLessThan(6)(rng)
 random.nonNegativeLessThanByFlatMap(6)(rng)
 
 random.rollDie(SimpleRNG(5))._1
+
+random.int(SimpleRNG(5))
