@@ -21,8 +21,6 @@ case class SimpleRNG(seed: Long) extends RNG {
 
 object random {
 
-  def int: Rand[Int] = rng => rng.nextInt
-
   def sameRandomPair(rng: RNG): (Int, Int) = {
     val (i1, _) = rng.nextInt
     val (i2, _) = rng.nextInt
@@ -199,6 +197,14 @@ case class State[S, +A](run: S => (A, S)) {
 object State {
   type Rand[A] = State[RNG, A]
 
+  def int: Rand[Int] = State(rng => rng.nextInt)
+
+  def ints(count: Int): Rand[List[Int]] = sequence(List.fill(count)(int))
+
   def unit[S, A](a: A): State[S, A] =
     State(s => (a, s))
+
+  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] =
+    fs.foldLeft[Rand[List[A]]](unit(List()))((b, a) => a.map2(b)(_ :: _))
+
 }
