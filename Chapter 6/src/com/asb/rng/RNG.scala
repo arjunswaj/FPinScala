@@ -156,11 +156,13 @@ object random {
 
 }
 
+import State._
+
 case class State[S, +A](run: S => (A, S)) {
-  def map[B](f: A => B): State[S, B] =
+  def mapFirstPrinciples[B](f: A => B): State[S, B] =
     State(s => (f(run(s)._1), s))
 
-  def map2[B, C](rb: State[S, B])(f: (A, B) => C): State[S, C] =
+  def map2FirstPrinciples[B, C](rb: State[S, B])(f: (A, B) => C): State[S, C] =
     State(s => {
       val (a, s2) = run(s)
       val (b, s3) = rb.run(s2)
@@ -172,6 +174,16 @@ case class State[S, +A](run: S => (A, S)) {
       val (a, s2) = run(s)
       g(a).run(s2)
     })
+
+  def map[B](f: A => B): State[S, B] =
+    flatMap(a => unit(f(a)))
+
+  // Note: You can use Unit inside flatMap inside flatMap
+  // or just Map inside flatMap
+
+  def map2[B, C](rb: State[S, B])(f: (A, B) => C): State[S, C] =
+    flatMap(a => rb.map(b => f(a, b)))
+
 }
 
 object State {
