@@ -39,23 +39,3 @@ random.nonNegativeLessThan(6)(rng)
 random.nonNegativeLessThanByFlatMap(6)(rng)
 
 random.rollDie(SimpleRNG(5))._1
-
-
-State.int.run(rng)
-State.ints(50).run(rng)
-
-val ns: State.Rand[List[Int]] =
-  State.int.flatMap(x =>
-    State.int.flatMap(y =>
-      State.ints(x).map(xs =>
-        xs.map(_ % y)
-      )
-    )
-  )
-
-val ns2: State.Rand[List[Int]] =
-  for {
-    x <- State.int
-    y <- State.int
-    xs <- State.ints(x)
-  } yield xs.map(_ % y)
