@@ -47,12 +47,18 @@ sealed trait MState {
         Right(GumballMachine(SoldOut, 0, machine.quarters))
       }
     case Winner =>
-      if (machine.candies > 0) {
-        machine.releaseBall
-        dispense(GumballMachine(Sold, machine.candies - 1, machine.quarters))
-      } else {
-        Right(GumballMachine(SoldOut, 0, machine.quarters))
-      }
+      def loop(n: Int, m: GumballMachine): GumballMachine =
+        if (n < machine.wb - 1) loop(n + 1, generateMachine(m))
+        else m
+
+      def generateMachine(m: GumballMachine): GumballMachine =
+        if (m.candies > 0) {
+          m.releaseBall
+          GumballMachine(Sold, m.candies - 1, m.quarters)
+        } else {
+          GumballMachine(SoldOut, 0, m.quarters)
+        }
+        dispense(loop(0, machine))
   }
 
   private def e(err: String): Left[Exception, GumballMachine] = Left(new Exception(err))
@@ -69,7 +75,7 @@ case object HasQuarter extends MState
 
 case object Winner extends MState
 
-case class GumballMachine(state: MState, candies: Int, quarters: Int) {
+case class GumballMachine(state: MState, candies: Int, quarters: Int, wb: Int = 3) {
   def insertQuarter: Either[Exception, GumballMachine] = state insertQuarter this
 
   def ejectQuarter: Either[Exception, GumballMachine] = state ejectQuarter this
