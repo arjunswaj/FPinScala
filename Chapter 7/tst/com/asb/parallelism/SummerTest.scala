@@ -1,5 +1,4 @@
 package com.asb.parallelism
-
 import com.asb.tests.UnitSpec
 
 /**
@@ -16,9 +15,9 @@ class SummerTest extends UnitSpec {
     summer.sumDQ(Seq(1, 2, 3, 4, 5)) shouldEqual 15
   }
 
-  "A DQ Summer" should "be same as original summer" in {
+  it should "be same as original summer" in {
     val seq = Seq(1, 2, 3, 4, 5)
-    summer.sum(seq) shouldEqual summer.sumDQ(seq)
+    summer.sum(seq) should equal (summer.sumDQ(seq))
   }
 
 }
