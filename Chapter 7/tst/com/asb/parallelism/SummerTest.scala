@@ -12,4 +12,8 @@ class SummerTest extends UnitSpec {
     summer.sum(Seq(1, 2, 3, 4, 5)) shouldEqual 15
   }
 
+  "A Summer" should "sum in divide and conquer as well" in {
+    summer.sumDQ(Seq(1, 2, 3, 4, 5)) shouldEqual 15
+  }
+
 }
