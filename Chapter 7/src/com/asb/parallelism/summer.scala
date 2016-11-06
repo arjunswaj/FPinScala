@@ -1,5 +1,7 @@
 package com.asb.parallelism
 
+import com.asb.parallelism.Par.Par
+
 /**
   * Created by arjun on 05/11/16.
   */
@@ -17,5 +19,13 @@ object summer {
   //noinspection SimplifiableFoldOrReduce
   def sum(ints: Seq[Int]) =
   ints.foldLeft(0)((b, a) => b + a)
+
+  def sumPar(ints: IndexedSeq[Int]): Par[Int] =
+    if (ints.size <= 1)
+      Par.unit(ints.headOption getOrElse 0)
+    else {
+      val (l, r) = ints.splitAt(ints.length / 2)
+      Par.map2(Par.fork(sumPar(l)), Par.fork(sumPar(r)))(_ + _)
+    }
 
 }
