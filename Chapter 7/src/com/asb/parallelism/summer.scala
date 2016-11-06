@@ -5,7 +5,7 @@ package com.asb.parallelism
   */
 object summer {
 
-  def sumDQ(ints: Seq[Int]): Int =
+  def sumDQ(ints: IndexedSeq[Int]): Int =
     if (ints.size <= 1)
       ints.headOption getOrElse 0
     else {

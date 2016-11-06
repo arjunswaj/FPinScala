@@ -12,12 +12,13 @@ class SummerTest extends UnitSpec {
   }
 
   "A Summer" should "sum in divide and conquer as well" in {
-    summer.sumDQ(Seq(1, 2, 3, 4, 5)) shouldEqual 15
+    summer.sumDQ(IndexedSeq(1, 2, 3, 4, 5)) shouldEqual 15
   }
 
   it should "be same as original summer" in {
     val seq = Seq(1, 2, 3, 4, 5)
-    summer.sum(seq) should equal (summer.sumDQ(seq))
+    val indexedSeq = IndexedSeq(1, 2, 3, 4, 5)
+    summer.sum(seq) should equal (summer.sumDQ(indexedSeq))
   }
 
 }
