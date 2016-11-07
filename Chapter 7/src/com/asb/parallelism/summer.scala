@@ -28,4 +28,11 @@ object summer {
       Par.map2(Par.fork(sumPar(l)), Par.fork(sumPar(r)))(_ + _)
     }
 
+  def sumPar2(ints: IndexedSeq[Int]): Par[Int] =
+    if (ints.size <= 1)
+      Par.unit(ints.headOption getOrElse 0)
+    else {
+      val (l, r) = ints.splitAt(ints.length / 2)
+      Par.map2T(Par.fork(sumPar2(l)), Par.fork(sumPar2(r)))(_ + _)
+    }
 }
