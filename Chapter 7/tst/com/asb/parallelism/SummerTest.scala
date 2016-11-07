@@ -27,4 +27,8 @@ class SummerTest extends UnitSpec {
   "A parallel summer" should "sum the values" in {
     Par.run(Executors.newFixedThreadPool(5))(summer.sumPar(IndexedSeq(1, 2, 3, 4, 5))).get shouldEqual 15
   }
+
+  "A parallel summer with timeout support" should "sum the values" in {
+    Par.run(Executors.newFixedThreadPool(5))(summer.sumPar2(IndexedSeq(1, 2, 3, 4, 5))).get shouldEqual 15
+  }
 }
