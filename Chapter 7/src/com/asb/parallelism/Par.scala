@@ -53,6 +53,10 @@ object Par {
   def sortPar(parList: Par[List[Int]]): Par[List[Int]] =
     map2T(parList, unit(()))((a, _) => a.sorted)
 
+  def map[A, B](pa: Par[A])(f: A => B): Par[B] =
+    map2T(pa, unit(()))((a, _) => f(a))
+
+
   case class Map2Future[A, B, C](a: Future[A], b: Future[B], f: (A, B) => C)
     extends Future[C] {
 

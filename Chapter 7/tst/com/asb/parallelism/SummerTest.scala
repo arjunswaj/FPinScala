@@ -55,4 +55,9 @@ class SummerTest extends UnitSpec {
     Par.run(es)(sorted).get should equal(sortedList)
   }
 
+  "A mapper" should "map the parallel computation" in {
+    val parStr: Par[String] = Par.unit("5")
+    val parInt: Par[Int] = Par.map(parStr)(_.toInt)
+  }
+
 }
