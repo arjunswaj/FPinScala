@@ -59,6 +59,14 @@ object Par {
   def sortParWithGeneralisedMap(parList: Par[List[Int]]): Par[List[Int]] =
     map(parList)(_.sorted)
 
+  def parMap[A, B](ps: List[A])(f: A => B): Par[List[B]] = {
+    val fbs: List[Par[B]] = ps.map(t => async(f)(t))
+    sequence(fbs.reverse)
+  }
+
+  def sequence[A](ps: List[Par[A]]): Par[List[A]] =
+    ps.foldLeft(Par.unit(List[A]()))((parOfList, el) => map2T(el, parOfList)(_ :: _))
+
   case class Map2Future[A, B, C](a: Future[A], b: Future[B], f: (A, B) => C)
     extends Future[C] {
 
