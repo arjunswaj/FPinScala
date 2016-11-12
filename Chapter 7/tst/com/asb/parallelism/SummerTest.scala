@@ -2,6 +2,7 @@ package com.asb.parallelism
 
 import java.util.concurrent.Executors
 
+import com.asb.parallelism.Par.Par
 import com.asb.tests.UnitSpec
 
 /**
@@ -10,31 +11,37 @@ import com.asb.tests.UnitSpec
   */
 class SummerTest extends UnitSpec {
 
+  val seq = Seq(1, 2, 3, 4, 5)
+  val indexedSeq = IndexedSeq(1, 2, 3, 4, 5)
+
   "A Summer" should "sum the values" in {
-    summer.sum(Seq(1, 2, 3, 4, 5)) shouldEqual 15
+    summer.sum(seq) shouldEqual 15
   }
 
   "A Summer" should "sum in divide and conquer as well" in {
-    summer.sumDQ(IndexedSeq(1, 2, 3, 4, 5)) shouldEqual 15
+    summer.sumDQ(indexedSeq) shouldEqual 15
   }
 
   it should "be same as original summer" in {
-    val seq = Seq(1, 2, 3, 4, 5)
-    val indexedSeq = IndexedSeq(1, 2, 3, 4, 5)
     summer.sum(seq) should equal(summer.sumDQ(indexedSeq))
   }
 
   "A parallel summer" should "sum the values" in {
-    Par.run(Executors.newFixedThreadPool(5))(summer.sumPar(IndexedSeq(1, 2, 3, 4, 5))).get shouldEqual 15
+    val es = Executors.newFixedThreadPool(3)
+    Par.run(es)(summer.sumPar(indexedSeq)).get shouldEqual 15
   }
 
   "A parallel summer with timeout support" should "sum the values" in {
-    Par.run(Executors.newFixedThreadPool(5))(summer.sumPar2(IndexedSeq(1, 2, 3, 4, 5))).get shouldEqual 15
+    val es = Executors.newFixedThreadPool(3)
+    Par.run(es)(summer.sumPar2(indexedSeq)).get shouldEqual 15
   }
 
   "A lazyUnit" should "make any function lazy" in {
+    val es = Executors.newFixedThreadPool(3)
     def addFive(a: Int): Int = a + 5
-    Par.async(addFive)(5)(Executors.newFixedThreadPool(2)).get should equal(10)
+    def asyncAddFive: Int => Par[Int] = Par.async(addFive)
+
+    Par.run(es)(asyncAddFive(5)).get should equal(10)
   }
 
 }
