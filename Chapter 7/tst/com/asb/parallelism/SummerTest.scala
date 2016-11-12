@@ -13,6 +13,8 @@ class SummerTest extends UnitSpec {
 
   val seq = Seq(1, 2, 3, 4, 5)
   val indexedSeq = IndexedSeq(1, 2, 3, 4, 5)
+  val unsortedList = List(5, 3, 2, 1, 4)
+  val sortedList = List(1, 2, 3, 4, 5)
 
   "A Summer" should "sum the values" in {
     summer.sum(seq) shouldEqual 15
@@ -42,6 +44,15 @@ class SummerTest extends UnitSpec {
     def asyncAddFive: Int => Par[Int] = Par.async(addFive)
 
     Par.run(es)(asyncAddFive(5)).get should equal(10)
+  }
+
+  "A sorter" should "sort the list" in {
+    val es = Executors.newFixedThreadPool(3)
+
+    val unsorted = Par.unit(unsortedList)
+    val sorted = Par.sortPar(unsorted)
+
+    Par.run(es)(sorted).get should equal(sortedList)
   }
 
 }

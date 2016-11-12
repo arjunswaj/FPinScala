@@ -50,6 +50,9 @@ object Par {
   def async[A, B](f: A => B): A => Par[B] =
     a => lazyUnit(f(a))
 
+  def sortPar(parList: Par[List[Int]]): Par[List[Int]] =
+    map2T(parList, unit(()))((a, _) => a.sorted)
+
   case class Map2Future[A, B, C](a: Future[A], b: Future[B], f: (A, B) => C)
     extends Future[C] {
 
