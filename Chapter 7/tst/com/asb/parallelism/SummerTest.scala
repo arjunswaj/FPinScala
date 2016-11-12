@@ -76,4 +76,10 @@ class SummerTest extends UnitSpec {
 
     Par.run(es)(Par.parMap(sortedList)(_ + 5)).get shouldEqual List(6, 7, 8, 9, 10)
   }
+
+  "A balanced parMap" should "map in parallel as well" in {
+    val es = Executors.newFixedThreadPool(2)
+    Par.run(es)(Par.parMapBalanced(sortedList)(_ + 2)).get shouldEqual List(3, 4, 5, 6, 7)
+   }
+
 }

@@ -67,6 +67,21 @@ object Par {
   def sequence[A](ps: List[Par[A]]): Par[List[A]] =
     ps.foldLeft(Par.unit(List[A]()))((parOfList, el) => map2T(el, parOfList)(_ :: _))
 
+  def parMapBalanced[A, B](ps: List[A])(f: A => B): Par[List[B]] = {
+    val fbs: List[Par[B]] = ps.map(t => async(f)(t))
+    sequenceBalanced(fbs)
+  }
+
+  def sequenceBalanced[A](ps: List[Par[A]]): Par[List[A]] =
+    map(sequenceBalanced(ps.toIndexedSeq))(_.toList)
+
+  def sequenceBalanced[A](ps: IndexedSeq[Par[A]]): Par[IndexedSeq[A]] = ps match {
+    case IndexedSeq() => unit(Vector())
+    case IndexedSeq(x) => map(x)(k => Vector(k))
+    case _ => val (l, r) = ps.splitAt(ps.length / 2)
+      map2T(sequenceBalanced(l), sequenceBalanced(r))((a, b) => a ++ b)
+  }
+
   case class Map2Future[A, B, C](a: Future[A], b: Future[B], f: (A, B) => C)
     extends Future[C] {
 
