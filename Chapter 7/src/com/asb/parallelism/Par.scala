@@ -9,6 +9,14 @@ import java.util.concurrent.{Callable, ExecutorService, Future, TimeUnit}
   */
 object Par {
 
+  def map2T[A, B, C](a: Par[A], b: Par[B])(f: (A, B) => C): Par[C] =
+    es => {
+      val af = a(es)
+      val bf = b(es)
+      Map2Future(af, bf, f)
+    }
+
+
   type Par[A] = ExecutorService => Future[A]
 
   def unit[A](a: A): Par[A] = (es: ExecutorService) => UnitFuture(a)
@@ -38,4 +46,35 @@ object Par {
   def lazyUnit[A](a: => A): Par[A] = fork(unit(a))
 
   def run[A](s: ExecutorService)(a: Par[A]): Future[A] = a(s)
+
+  case class Map2Future[A, B, C](a: Future[A], b: Future[B], f: (A, B) => C)
+    extends Future[C] {
+
+    @volatile var cache: Option[C] = None
+
+    override def isCancelled: Boolean = a.isCancelled || b.isCancelled
+
+    override def get(): C = compute(Long.MaxValue)
+
+    override def get(timeout: Long, unit: TimeUnit): C = compute(timeout)
+
+    override def cancel(mayInterruptIfRunning: Boolean): Boolean =
+      a.cancel(mayInterruptIfRunning) || b.cancel(mayInterruptIfRunning)
+
+    override def isDone: Boolean = cache.isDefined
+
+    private def compute(timeout: Long): C = cache match {
+      case Some(c) => c
+      case None =>
+        val start = System.currentTimeMillis
+        val ar = a.get(timeout, TimeUnit.MILLISECONDS)
+        val stop = System.currentTimeMillis()
+        val at = start - stop
+        val br = b.get(timeout - at, TimeUnit.MILLISECONDS)
+        val ret = f(ar, br)
+        cache = Some(ret)
+        ret
+    }
+  }
+
 }
