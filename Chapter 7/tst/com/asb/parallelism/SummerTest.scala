@@ -60,4 +60,15 @@ class SummerTest extends UnitSpec {
     val parInt: Par[Int] = Par.map(parStr)(_.toInt)
   }
 
+
+  "A better sorter" should "sort the list as well" in {
+
+    val es = Executors.newFixedThreadPool(2)
+
+    val unsorted = Par.unit(unsortedList)
+    val sorted = Par.sortParWithGeneralisedMap(unsorted)
+
+    Par.run(es)(sorted).get shouldEqual sortedList
+  }
+
 }
