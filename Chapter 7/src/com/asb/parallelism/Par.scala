@@ -47,6 +47,9 @@ object Par {
 
   def run[A](s: ExecutorService)(a: Par[A]): Future[A] = a(s)
 
+  def async[A, B](f: A => B): A => Par[B] =
+    a => lazyUnit(f(a))
+
   case class Map2Future[A, B, C](a: Future[A], b: Future[B], f: (A, B) => C)
     extends Future[C] {
 

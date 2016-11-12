@@ -31,4 +31,10 @@ class SummerTest extends UnitSpec {
   "A parallel summer with timeout support" should "sum the values" in {
     Par.run(Executors.newFixedThreadPool(5))(summer.sumPar2(IndexedSeq(1, 2, 3, 4, 5))).get shouldEqual 15
   }
+
+  "A lazyUnit" should "make any function lazy" in {
+    def addFive(a: Int): Int = a + 5
+    Par.async(addFive)(5)(Executors.newFixedThreadPool(2)).get should equal(10)
+  }
+
 }
