@@ -90,6 +90,8 @@ class SummerTest extends UnitSpec {
 
   "A max val" should "give the maximum value in the list in parallel" in {
     val es = Executors.newFixedThreadPool(5)
+    Par.run(es)(summer.maxPar(IndexedSeq())).get shouldEqual 0
+    Par.run(es)(summer.maxPar(IndexedSeq(10))).get shouldEqual 10
     Par.run(es)(summer.maxPar(indexedSeq)).get shouldEqual 5
   }
 

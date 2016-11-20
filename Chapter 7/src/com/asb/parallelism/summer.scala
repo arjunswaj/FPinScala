@@ -37,5 +37,11 @@ object summer {
     }
 
   def maxPar(ints: IndexedSeq[Int]): Par[Int] =
-    ???
+    if (ints.size <= 1)
+      Par.unit(ints.headOption getOrElse 0)
+    else {
+      val (l, r) = ints.splitAt(ints.length / 2)
+      Par.map2T(Par.fork(maxPar(l)), Par.fork(maxPar(r)))((a, b) => if (a > b) a else b)
+    }
+
 }
