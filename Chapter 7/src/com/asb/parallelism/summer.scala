@@ -35,4 +35,7 @@ object summer {
       val (l, r) = ints.splitAt(ints.length / 2)
       Par.map2T(Par.fork(sumPar2(l)), Par.fork(sumPar2(r)))(_ + _)
     }
+
+  def maxPar(ints: IndexedSeq[Int]): Par[Int] =
+    ???
 }
