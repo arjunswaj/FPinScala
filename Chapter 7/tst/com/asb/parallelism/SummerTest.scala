@@ -82,4 +82,10 @@ class SummerTest extends UnitSpec {
     Par.run(es)(Par.parMapBalanced(sortedList)(_ + 2)).get shouldEqual List(3, 4, 5, 6, 7)
    }
 
+  "A parFilter" should "filter the elements of a list in parallel" in {
+    val es = Executors.newFixedThreadPool(5)
+    Par.run(es)(Par.parFilter(sortedList)(0 == _ % 2)).get shouldEqual List(2, 4)
+    Par.run(es)(Par.parFilter(sortedList)(0 != _ % 2)).get shouldEqual List(1, 3, 5)
+  }
+
 }
