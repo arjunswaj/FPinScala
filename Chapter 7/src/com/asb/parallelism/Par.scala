@@ -45,6 +45,9 @@ object Par {
   def map4[A, B, C, D, E](a: Par[A], b: Par[B], c: Par[C], d: Par[D])(f: (A, B, C, D) => E): Par[E] =
     map2(map2(map2(a, b)((aa, bb) => (cc: C, dd: D) => f(aa, bb, cc, dd)), c)((cdToE, c) => (dd: D) => cdToE(c, dd)), d)((dToE, d) => dToE(d))
 
+  def map5[A, B, C, D, E, F](a: Par[A], b: Par[B], c: Par[C], d: Par[D], e: Par[E])(f: (A, B, C, D, E) => F): Par[F] =
+    map2(map4(a, b, c, d)((aa, bb, cc, dd) => (ee: E) => f(aa, bb, cc, dd, ee)), e)((eToF, f) => eToF(f))
+
   def fork[A](a: => Par[A]): Par[A] =
     es => es.submit(new Callable[A] {
       override def call(): A = a(es).get
