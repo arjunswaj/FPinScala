@@ -82,7 +82,10 @@ object Par {
       map2T(sequenceBalanced(l), sequenceBalanced(r))((a, b) => a ++ b)
   }
 
-  def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = ???
+  def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = {
+    val pl: List[Par[List[A]]] = as map async((a: A) => if (f(a)) List(a) else List())
+    map(sequenceBalanced(pl))(t => t.flatten)
+  }
 
   case class Map2Future[A, B, C](a: Future[A], b: Future[B], f: (A, B) => C)
     extends Future[C] {
