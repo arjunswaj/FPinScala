@@ -95,4 +95,11 @@ class SummerTest extends UnitSpec {
     Par.run(es)(summer.maxPar(indexedSeq)).get shouldEqual 5
   }
 
+  "A word counter" should "give the count of all the words" in {
+    val es = Executors.newFixedThreadPool(2)
+    Par.run(es)(summer.wordCount(List())).get shouldEqual 0
+    Par.run(es)(summer.wordCount("Hola".split(" ").toList)).get shouldEqual 1
+    Par.run(es)(summer.wordCount("Times they are a changin'".split(" ").toList)).get shouldEqual 4
+  }
+
 }

@@ -44,4 +44,6 @@ object summer {
       Par.map2T(Par.fork(maxPar(l)), Par.fork(maxPar(r)))((a, b) => if (a > b) a else b)
     }
 
+  def wordCount(str: List[String]): Par[Int] = ???
+
 }
