@@ -55,6 +55,9 @@ object Par {
       override def call(): A = a(es).get
     })
 
+  // Fork that won't fork a new thread, but delays execution until needed.
+  def delay[A](a: => Par[A]): Par[A] = es => a(es)
+
   def lazyUnit[A](a: => A): Par[A] = fork(unit(a))
 
   def run[A](s: ExecutorService)(a: Par[A]): Future[A] = a(s)
