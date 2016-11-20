@@ -38,6 +38,10 @@ object Par {
       UnitFuture(f(af.get, bf.get))
     }
 
+  def map3[A, B, C, D](a: Par[A], b: Par[B], c: Par[C])(f: (A, B, C) => D): Par[D] =
+    map2(map2(a, b)((aa, bb) => (cc: C) => f(aa, bb, cc)), c)((cToD, c) => cToD(c))
+
+
   def fork[A](a: => Par[A]): Par[A] =
     es => es.submit(new Callable[A] {
       override def call(): A = a(es).get
