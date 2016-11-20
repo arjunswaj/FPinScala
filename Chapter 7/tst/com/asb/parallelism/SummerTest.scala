@@ -28,6 +28,9 @@ class SummerTest extends UnitSpec {
     summer.sum(seq) should equal(summer.sumDQ(indexedSeq))
   }
 
+  // 7.09: With current implementation of the fork, all these below fixed thread pool
+  // are bound to be deadlocked. Read book
+
   "A parallel summer" should "sum the values" in {
     val es = Executors.newFixedThreadPool(3)
     Par.run(es)(summer.sumPar(indexedSeq)).get shouldEqual 15
