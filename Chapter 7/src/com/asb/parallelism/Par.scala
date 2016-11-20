@@ -41,12 +41,14 @@ object Par {
   def map3[A, B, C, D](a: Par[A], b: Par[B], c: Par[C])(f: (A, B, C) => D): Par[D] =
     map2(map2(a, b)((aa, bb) => (cc: C) => f(aa, bb, cc)), c)((cToD, c) => cToD(c))
 
-
   def map4[A, B, C, D, E](a: Par[A], b: Par[B], c: Par[C], d: Par[D])(f: (A, B, C, D) => E): Par[E] =
     map2(map2(map2(a, b)((aa, bb) => (cc: C, dd: D) => f(aa, bb, cc, dd)), c)((cdToE, c) => (dd: D) => cdToE(c, dd)), d)((dToE, d) => dToE(d))
 
   def map5[A, B, C, D, E, F](a: Par[A], b: Par[B], c: Par[C], d: Par[D], e: Par[E])(f: (A, B, C, D, E) => F): Par[F] =
     map2(map4(a, b, c, d)((aa, bb, cc, dd) => (ee: E) => f(aa, bb, cc, dd, ee)), e)((eToF, f) => eToF(f))
+
+  def map6[A, B, C, D, E, F, G](a: Par[A], b: Par[B], c: Par[C], d: Par[D], e: Par[E], f: Par[F])(x: (A, B, C, D, E, F) => G): Par[G] =
+    map3(map4(a, b, c, d)((aa, bb, cc, dd) => (ee: E, ff: F) => x(aa, bb, cc, dd, ee, ff)), e, f)((efTog, e, f) => efTog(e, f))
 
   def fork[A](a: => Par[A]): Par[A] =
     es => es.submit(new Callable[A] {
