@@ -102,6 +102,12 @@ object Par {
     map(sequenceBalanced(pl))(t => t.flatten)
   }
 
+
+  def choice[A](p: Par[Boolean])(a: Par[A], b: Par[A]): Par[A] =
+    es =>
+      if (run(es)(p).get) a(es)
+      else b(es)
+
   case class Map2Future[A, B, C](a: Future[A], b: Future[B], f: (A, B) => C)
     extends Future[C] {
 
