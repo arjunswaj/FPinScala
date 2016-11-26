@@ -112,7 +112,10 @@ object Par {
     es => ls(run(es)(p).get)(es)
 
   def choiceAsChoiceN[A](p: Par[Boolean])(a: Par[A], b: Par[A]): Par[A] =
-    choiceN(map(p)(if(_) 0 else 1))(List(a, b))
+    choiceN(map(p)(if (_) 0 else 1))(List(a, b))
+
+  def choiceMap[K, V](key: Par[K])(choices: Map[K, Par[V]]): Par[V] =
+    es => choices(run(es)(key).get)(es)
 
   case class Map2Future[A, B, C](a: Future[A], b: Future[B], f: (A, B) => C)
     extends Future[C] {

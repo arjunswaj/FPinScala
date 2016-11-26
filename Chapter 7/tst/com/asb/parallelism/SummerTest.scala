@@ -43,7 +43,9 @@ class SummerTest extends UnitSpec {
 
   "A lazyUnit" should "make any function lazy" in {
     val es = Executors.newFixedThreadPool(3)
+
     def addFive(a: Int): Int = a + 5
+
     def asyncAddFive: Int => Par[Int] = Par.async(addFive)
 
     Par.run(es)(asyncAddFive(5)).get should equal(10)
@@ -129,6 +131,14 @@ class SummerTest extends UnitSpec {
     val a = summer.wordCount("Times they are a changin Dylan".split(" ").toList.toIndexedSeq)
     val b = summer.wordCount("Times they are a changin".split(" ").toList.toIndexedSeq)
     Par.run(es)(Par.choiceAsChoiceN(cond)(a, b)).get shouldEqual 5
+  }
+
+  "A choiceMap" should "give the right choice" in {
+    val es = Executors.newCachedThreadPool()
+    val key = Par.unit("Dylan")
+    val a = summer.wordCount("Times they are a changin Dylan".split(" ").toList.toIndexedSeq)
+    val b = summer.wordCount("Times they are a changin".split(" ").toList.toIndexedSeq)
+    Par.run(es)(Par.choiceMap[String, Int](key)(Map(("Dylan", a), ("Anon", b)))).get shouldEqual 6
   }
 
 }
