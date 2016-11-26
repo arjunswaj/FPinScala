@@ -168,4 +168,10 @@ class SummerTest extends UnitSpec {
     Par.run(es)(Par.choiceNAsChooser(choice)(List(a, b, c))).get shouldEqual 6
   }
 
+  "A join" should "Flatten the Par" in {
+    val es = Executors.newCachedThreadPool()
+    val choice = Par.unit(Par.unit(1))
+    Par.run(es)(Par.join(choice)).get shouldEqual 1
+  }
+
 }

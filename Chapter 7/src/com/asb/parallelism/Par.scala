@@ -126,6 +126,9 @@ object Par {
   def choiceNAsChooser[A](p: Par[Int])(ls: List[Par[A]]): Par[A] =
     chooser(p)(ls(_))
 
+  def join[A](a: Par[Par[A]]): Par[A] =
+    es => run(es)(run(es)(a).get())
+
   case class Map2Future[A, B, C](a: Future[A], b: Future[B], f: (A, B) => C)
     extends Future[C] {
 
