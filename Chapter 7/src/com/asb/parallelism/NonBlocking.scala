@@ -119,6 +119,20 @@ object NonBlocking {
 
     def parMap[A, B](as: IndexedSeq[A])(f: A => B): Par[IndexedSeq[B]] =
       sequenceBalanced(as.map(asyncF(f)))
+
+    def choice[A](p: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
+      es => new Future[A] {
+        def apply(cb: (A) => Unit): Unit =
+          p(es) {
+            b =>
+              if (b) eval(es) {
+                t(es)(cb)
+              }
+              else eval(es) {
+                f(es)(cb)
+              }
+          }
+      }
   }
 
 }
