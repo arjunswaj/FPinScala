@@ -117,6 +117,9 @@ object Par {
   def choiceMap[K, V](key: Par[K])(choices: Map[K, Par[V]]): Par[V] =
     es => choices(run(es)(key).get)(es)
 
+  def chooser[A, B](pa: Par[A])(choices: A => Par[B]): Par[B] =
+    es => choices(run(es)(pa).get)(es)
+
   case class Map2Future[A, B, C](a: Future[A], b: Future[B], f: (A, B) => C)
     extends Future[C] {
 

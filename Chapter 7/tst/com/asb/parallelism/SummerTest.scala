@@ -141,4 +141,13 @@ class SummerTest extends UnitSpec {
     Par.run(es)(Par.choiceMap[String, Int](key)(Map(("Dylan", a), ("Anon", b)))).get shouldEqual 6
   }
 
+  "A chooser" should "give the right choice" in {
+    val es = Executors.newCachedThreadPool()
+    val key = Par.unit("Dylan")
+    val a = summer.wordCount("Times they are a changin Dylan".split(" ").toList.toIndexedSeq)
+    val b = summer.wordCount("Times they are a changin".split(" ").toList.toIndexedSeq)
+
+    Par.run(es)(Par.chooser[String, Int](key)(t => if (t.equals("Dylan")) a else b)).get shouldEqual 6
+  }
+
 }
