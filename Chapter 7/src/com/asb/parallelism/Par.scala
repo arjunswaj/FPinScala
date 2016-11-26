@@ -120,6 +120,12 @@ object Par {
   def chooser[A, B](pa: Par[A])(choices: A => Par[B]): Par[B] =
     es => choices(run(es)(pa).get)(es)
 
+  def choiceAsChooser[A](p: Par[Boolean])(a: Par[A], b: Par[A]): Par[A] =
+    chooser(p)(if (_) a else b)
+
+  def choiceNAsChooser[A](p: Par[Int])(ls: List[Par[A]]): Par[A] =
+    chooser(p)(ls(_))
+
   case class Map2Future[A, B, C](a: Future[A], b: Future[B], f: (A, B) => C)
     extends Future[C] {
 
