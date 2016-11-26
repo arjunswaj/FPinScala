@@ -129,6 +129,9 @@ object Par {
   def join[A](a: Par[Par[A]]): Par[A] =
     es => run(es)(run(es)(a).get())
 
+  def flatMap[A, B](a: Par[A])(f: A => Par[B]): Par[B] =
+    join(map(a)(f))
+
   case class Map2Future[A, B, C](a: Future[A], b: Future[B], f: (A, B) => C)
     extends Future[C] {
 

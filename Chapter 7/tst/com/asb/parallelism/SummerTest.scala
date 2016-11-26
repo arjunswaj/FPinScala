@@ -174,4 +174,10 @@ class SummerTest extends UnitSpec {
     Par.run(es)(Par.join(choice)).get shouldEqual 1
   }
 
+  "A flatMap" should "apply Map and then Join" in {
+    val es = Executors.newCachedThreadPool()
+    Par.run(es)(Par.flatMap[String, Int](Par.unit("Hello World"))
+      (s => summer.wordCount(s.split(" ").toList.toIndexedSeq))).get shouldEqual 2
+  }
+
 }
