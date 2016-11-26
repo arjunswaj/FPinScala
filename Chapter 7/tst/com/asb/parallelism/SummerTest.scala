@@ -113,4 +113,14 @@ class SummerTest extends UnitSpec {
     Par.run(es)(Par.choice(cond)(a, b)).get shouldEqual 5
   }
 
+  "A n choice" should "give the nth choice" in {
+    val es = Executors.newCachedThreadPool()
+    val choice = Par.unit(1)
+    val a = summer.wordCount("Times they are a changin Bob Dylan".split(" ").toList.toIndexedSeq)
+    val b = summer.wordCount("Times they are a changin Dylan".split(" ").toList.toIndexedSeq)
+    val c = summer.wordCount("Times they are a changin".split(" ").toList.toIndexedSeq)
+
+    Par.run(es)(Par.choiceN(choice)(List(a, b, c))).get shouldEqual 6
+
+  }
 }

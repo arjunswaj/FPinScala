@@ -108,6 +108,9 @@ object Par {
       if (run(es)(p).get) a(es)
       else b(es)
 
+  def choiceN[A](p: Par[Int])(ls: List[Par[A]]): Par[A] =
+    es => ls(run(es)(p).get)(es)
+
   case class Map2Future[A, B, C](a: Future[A], b: Future[B], f: (A, B) => C)
     extends Future[C] {
 
