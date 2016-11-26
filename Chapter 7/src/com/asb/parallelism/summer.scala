@@ -18,7 +18,7 @@ object summer {
 
   //noinspection SimplifiableFoldOrReduce
   def sum(ints: Seq[Int]) =
-  ints.foldLeft(0)((b, a) => b + a)
+    ints.foldLeft(0)((b, a) => b + a)
 
   def sumPar(ints: IndexedSeq[Int]): Par[Int] =
     if (ints.size <= 1)
@@ -50,6 +50,15 @@ object summer {
     else {
       val (l, r) = strs.splitAt(strs.length / 2)
       Par.map2(Par.fork(wordCount(l)), Par.fork(wordCount(r)))(_ + _)
+    }
+
+  def nonBlockingWordCount(strs: IndexedSeq[String]): NonBlocking.Par[Int] =
+    if (strs.size <= 1)
+      NonBlocking.Par.unit(strs.length)
+    else {
+      val (l, r) = strs.splitAt(strs.length / 2)
+      NonBlocking.Par.map2(NonBlocking.Par.fork(nonBlockingWordCount(l)),
+        NonBlocking.Par.fork(nonBlockingWordCount(r)))(_ + _)
     }
 
 }
