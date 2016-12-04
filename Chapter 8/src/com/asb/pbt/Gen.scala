@@ -1,16 +1,28 @@
 package com.asb.pbt
 
+import com.asb.pbt.Prop.{FailedCase, SuccessCount}
+import com.asb.rng.{RNG, State}
+
+import scala.util.Left
+
 /**
   * Gen
   * Created by arjun on 04/12/16.
   */
-case class Gen[A]()
+case class Gen[A](sample: State[RNG, A])
+
+object Prop {
+  type SuccessCount = Int
+  type FailedCase = String
+}
 
 trait Prop {
-  def check: Boolean
+  def check: Either[(FailedCase, SuccessCount), SuccessCount]
 
   def &&(p: Prop): Prop = new Prop {
-    def check: Boolean = Prop.this.check && p.check
+    def check: Either[(FailedCase, SuccessCount), SuccessCount] =
+      Prop.this.check.right.flatMap(sc => p.check.fold(err => Left((err._1, err._2 + sc)),
+        succ => Right(sc + succ)))
   }
 
 }
