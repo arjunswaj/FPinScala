@@ -7,7 +7,12 @@ package com.asb.pbt
 case class Gen[A]()
 
 trait Prop {
-  def &&(p: Prop): Prop
+  def check: Boolean
+
+  def &&(p: Prop): Prop = new Prop {
+    def check: Boolean = Prop.this.check && p.check
+  }
+
 }
 
 object Gen {
