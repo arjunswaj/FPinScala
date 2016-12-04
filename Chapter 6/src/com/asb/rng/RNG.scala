@@ -114,7 +114,7 @@ object random {
 
   // This will be reverse, mind it. This is the book solution.
   def sequence2[A](fs: List[Rand[A]]): Rand[List[A]] =
-  fs.foldRight(unit(List[A]()))((acc, t) => map2AsFlatMap(acc, t)(_ :: _))
+    fs.foldRight(unit(List[A]()))((acc, t) => map2AsFlatMap(acc, t)(_ :: _))
 
   def intsAsSeq(count: Int)(rng: RNG): (List[Int], RNG) =
     sequence[Int](List.fill(count)(x => x.nextInt))(rng)
@@ -153,5 +153,10 @@ object random {
     })
 
   def rollDie: Rand[Int] = map(nonNegativeLessThan(6))(_ + 1)
+
+  def boolean(rng: RNG): (Boolean, RNG) = {
+    val (n, rng2) = rng.nextInt
+    (0 == n % 2, rng2)
+  }
 
 }

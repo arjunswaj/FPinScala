@@ -38,4 +38,8 @@ object Gen {
   def choose(start: Int, stopExclusive: Int): Gen[Int] =
     Gen(State(random.nonNegativeInt).map(n => start + n % (stopExclusive - start)))
 
+  def unit[A](a: => A): Gen[A] = Gen(State.unit(a))
+
+  def boolean: Gen[Boolean] = Gen(State(random.boolean))
+
 }
