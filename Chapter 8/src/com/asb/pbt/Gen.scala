@@ -1,7 +1,7 @@
 package com.asb.pbt
 
 import com.asb.pbt.Prop.{FailedCase, SuccessCount}
-import com.asb.rng.{RNG, State}
+import com.asb.rng.{RNG, SimpleRNG, State, random}
 
 import scala.util.Left
 
@@ -34,5 +34,8 @@ object Gen {
   def listOfN[A](n: Int, a: Gen[A]): Gen[List[A]] = ???
 
   def forAll[A](a: Gen[A])(f: A => Boolean): Prop = ???
+
+  def choose(start: Int, stopExclusive: Int): Gen[Int] =
+    Gen(State(random.nonNegativeInt).map(n => start + n % (stopExclusive - start)))
 
 }
