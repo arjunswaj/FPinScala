@@ -34,6 +34,9 @@ object Gen {
   def listOfN[A](n: Int, a: Gen[A]): Gen[List[A]] =
     Gen(State.sequence(List.fill(n)(a.sample)))
 
+  def tuple2[A](a: Gen[A]): Gen[(A, A)] =
+    Gen(State.sequence(List.fill(2)(a.sample)).map(list => (list.head, list(1))))
+
   def forAll[A](a: Gen[A])(f: A => Boolean): Prop = ???
 
   def choose(start: Int, stopExclusive: Int): Gen[Int] =
