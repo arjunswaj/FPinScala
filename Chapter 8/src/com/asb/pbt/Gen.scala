@@ -9,7 +9,16 @@ import scala.util.Left
   * Gen
   * Created by arjun on 04/12/16.
   */
-case class Gen[A](sample: State[RNG, A])
+case class Gen[A](sample: State[RNG, A]) {
+  def flatMap[B](f: A => Gen[B]): Gen[B] =
+    Gen(sample.flatMap(a => f(a).sample))
+
+  def listOfN(size: Int): Gen[List[A]] =
+    Gen.listOfN(size, this)
+
+  def listOfN(size: Gen[Int]): Gen[List[A]] =
+    size flatMap (i => listOfN(i))
+}
 
 object Prop {
   type SuccessCount = Int
