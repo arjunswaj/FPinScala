@@ -1,9 +1,7 @@
 package com.asb.pbt
 
-import com.asb.pbt.Prop.{FailedCase, SuccessCount}
+import com.asb.pbt.Prop.{Result, TestCases}
 import com.asb.rng.{RNG, State, random}
-
-import scala.util.Left
 
 /**
   * Gen
@@ -23,18 +21,22 @@ case class Gen[A](sample: State[RNG, A]) {
 object Prop {
   type SuccessCount = Int
   type FailedCase = String
+  type TestCases = Int
+  type Result = Either[(FailedCase, SuccessCount), SuccessCount]
 }
 
-trait Prop {
-  def check: Either[(FailedCase, SuccessCount), SuccessCount]
+case class Prop(run: TestCases => Result)
 
-  def &&(p: Prop): Prop = new Prop {
-    def check: Either[(FailedCase, SuccessCount), SuccessCount] =
-      Prop.this.check.right.flatMap(sc => p.check.fold(err => Left((err._1, err._2 + sc)),
-        succ => Right(sc + succ)))
-  }
-
-}
+//trait Prop {
+//  def check: Either[(FailedCase, SuccessCount), SuccessCount]
+//
+//  def &&(p: Prop): Prop = new Prop {
+//    def check: Either[(FailedCase, SuccessCount), SuccessCount] =
+//      Prop.this.check.right.flatMap(sc => p.check.fold(err => Left((err._1, err._2 + sc)),
+//        succ => Right(sc + succ)))
+//  }
+//
+//}
 
 object Gen {
 
