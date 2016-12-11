@@ -14,3 +14,10 @@ Gen.choose(2, 5).sample.run(rng)
 
 // Pair in a range
 Gen.tuple2(Gen.choose(45, 563)).sample.run(rng)
+
+// Option[A] to A
+Gen.unit(None).sample.map(i => i.getOrElse(4)).run(rng)
+Gen.unit(Some(2)).sample.map(i => i.getOrElse(4)).run(rng)
+
+// A to Option
+Gen.choose(2, 10).sample.map(i => Some(i)).run(rng)
