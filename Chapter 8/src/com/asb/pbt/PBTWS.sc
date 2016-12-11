@@ -21,3 +21,9 @@ Gen.unit(Some(2)).sample.map(i => i.getOrElse(4)).run(rng)
 
 // A to Option
 Gen.choose(2, 10).sample.map(i => Some(i)).run(rng)
+
+// Generate strings. Do they mean this?
+Gen.listOfN(5, Gen.choose(1, 10)).sample.map {
+  case i  if i.length < 2 => "Lol"
+  case _ => "TeeHee"
+}.run(rng)
