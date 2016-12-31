@@ -1,6 +1,6 @@
 package com.asb.pbt
 
-import com.asb.pbt.Prop.{Result, TestCases}
+import com.asb.pbt.Prop.{FailedCase, SuccessCount, TestCases}
 import com.asb.rng.{RNG, State, random}
 
 /**
@@ -22,7 +22,18 @@ object Prop {
   type SuccessCount = Int
   type FailedCase = String
   type TestCases = Int
-  type Result = Either[(FailedCase, SuccessCount), SuccessCount]
+}
+
+sealed trait Result {
+  def isFalsified: Boolean
+}
+
+case object Passed extends Result {
+  def isFalsified = true
+}
+
+case class Falsified(failure: FailedCase, successes: SuccessCount) extends Result {
+  def isFalsified = true
 }
 
 case class Prop(run: TestCases => Result)
