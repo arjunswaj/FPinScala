@@ -37,7 +37,26 @@ case class Falsified(failure: FailedCase, successes: SuccessCount) extends Resul
   def isFalsified = true
 }
 
-case class Prop(run: (TestCases, RNG) => Result)
+case class Prop(run: (TestCases, RNG) => Result) {
+  def &&(p: Prop): Prop = Prop {
+    (n, rng) =>
+      run(n, rng) match {
+        case Passed => p.run(n, rng)
+        case x => x
+      }
+  }
+
+  def ||(p: Prop): Prop = Prop {
+    (n, rng) =>
+      run(n, rng) match {
+        case Falsified(f, _) => p.run(n, rng) match {
+          case Falsified(f2, c) => Falsified(f + "\n" + f2, c)
+          case x => x
+        }
+        case x => x
+      }
+  }
+}
 
 //trait Prop {
 //  def check: Either[(FailedCase, SuccessCount), SuccessCount]
