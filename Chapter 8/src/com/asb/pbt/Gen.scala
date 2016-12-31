@@ -2,6 +2,7 @@ package com.asb.pbt
 
 import com.asb.pbt.Prop.{FailedCase, SuccessCount, TestCases}
 import com.asb.rng.{RNG, State, random}
+import com.asb.snl.Stream
 
 /**
   * Gen
@@ -59,7 +60,24 @@ object Gen {
   def tuple2[A](a: Gen[A]): Gen[(A, A)] =
     Gen(State.sequence(List.fill(2)(a.sample)).map(list => (list.head, list(1))))
 
-  def forAll[A](a: Gen[A])(f: A => Boolean): Prop = ???
+  def forAll[A](as: Gen[A])(f: A => Boolean): Prop = Prop {
+    (n, rng) =>
+      randomStream(as)(rng).zip(Stream.from(0)).take(n).map {
+        case (a, i) => try {
+          if (f(a)) Passed else Falsified(a.toString, i)
+        } catch {
+          case e: Exception => Falsified(buildMsg(a, e), i)
+        }
+      }.find(k => k.isFalsified).getOrElse(Passed)
+  }
+
+  def buildMsg[A](s: A, e: Exception): String =
+    s"test case: $s\n" +
+      s"generated an exception: ${e.getMessage}\n" +
+      s"stack trace:\n ${e.getStackTrace.mkString("\n")}"
+
+  def randomStream[A](g: Gen[A])(rng: RNG): Stream[A] =
+    Stream.unfold(rng)(rng => Some(g.sample.run(rng)))
 
   def choose(start: Int, stopExclusive: Int): Gen[Int] =
     Gen(State(random.nonNegativeInt).map(n => start + n % (stopExclusive - start)))
