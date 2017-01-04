@@ -17,7 +17,11 @@ case class Gen[A](sample: State[RNG, A]) {
 
   def listOfN(size: Gen[Int]): Gen[List[A]] =
     size flatMap (i => listOfN(i))
+
+  def unsized: SGen[A] = SGen(i => this)
 }
+
+case class SGen[+A](forSize: Int => Gen[A])
 
 object Prop {
   type SuccessCount = Int
