@@ -24,7 +24,23 @@ case class Gen[A](sample: State[RNG, A]) {
   def unsized: SGen[A] = SGen(i => this)
 }
 
-case class SGen[+A](forSize: Int => Gen[A])
+case class SGen[+A](forSize: Int => Gen[A]) {
+
+  def map[B](f: A => B): SGen[B] =
+    SGen(forSize.andThen(genA => genA map f))
+
+  def flatMap[B](f: A => Gen[B]): SGen[B] =
+    SGen(forSize.andThen(genA => genA flatMap f))
+
+  def flatMap[B](f: A => SGen[B]): SGen[B] = {
+    val g2: Int => Gen[B] = n => {
+      forSize(n) flatMap {
+        f(_).forSize(n)
+      }
+    }
+    SGen(g2)
+  }
+}
 
 object Prop {
   type SuccessCount = Int
