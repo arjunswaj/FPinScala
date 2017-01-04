@@ -9,6 +9,9 @@ import com.asb.snl.Stream
   * Created by arjun on 04/12/16.
   */
 case class Gen[A](sample: State[RNG, A]) {
+  def map[B](f: A => B): Gen[B] =
+    Gen(sample.map(a => f(a)))
+
   def flatMap[B](f: A => Gen[B]): Gen[B] =
     Gen(sample.flatMap(a => f(a).sample))
 
