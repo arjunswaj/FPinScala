@@ -40,6 +40,10 @@ case class SGen[+A](forSize: Int => Gen[A]) {
     }
     SGen(g2)
   }
+
+  def listOfN(size: Int): SGen[List[A]] =
+    SGen(forSize.andThen(gen => gen.listOfN(size)))
+
 }
 
 object Prop {
