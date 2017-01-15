@@ -47,7 +47,10 @@ Prop.run(maxProp1)
 
 val sortedProp = Prop.forAll(Gen.listOf(smallInt)) {
   l =>
-    l.sorted.foldLeft((Int.MinValue, true))((acc, ele) => (ele, acc._2 && acc._1 <= ele))._2
+  val sl = l.sorted
+    sl.foldLeft((Int.MinValue, true))((acc, ele) => (ele, acc._2 && acc._1 <= ele))._2 &&
+    !l.exists(k => !sl.contains(k)) &&
+    !sl.exists(k => !l.contains(k))
 }
 
 Prop.run(sortedProp)
