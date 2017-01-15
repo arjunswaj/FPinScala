@@ -37,3 +37,10 @@ val maxProp = Prop.forAll(Gen.listOf(smallInt)) {
 
 Prop.run(maxProp)
 
+val maxProp1 = Prop.forAll(Gen.listOf1(smallInt)) {
+  l =>
+    val max = l.max
+    !l.exists(_ > max)
+}
+
+Prop.run(maxProp1)
