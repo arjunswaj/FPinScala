@@ -1,7 +1,6 @@
 package com.asb.pbt
 
-import com.asb.pbt.Prop.{FailedCase, MaxSize, SuccessCount, TestCases}
-import com.asb.rng.{RNG, State, random}
+import com.asb.rng.{RNG, SimpleRNG, State, random}
 import com.asb.snl.Stream
 
 /**
@@ -31,7 +30,7 @@ case class SGen[A](forSize: Int => Gen[A]) {
   def map[B](f: A => B): SGen[B] =
     SGen(forSize.andThen(genA => genA map f))
 
-  def flatMap[B](f: A => Gen[B]): SGen[B] =
+  def flatMap1[B](f: A => Gen[B]): SGen[B] =
     SGen(forSize.andThen(genA => genA flatMap f))
 
   def flatMap[B](f: A => SGen[B]): SGen[B] = {
@@ -70,16 +69,16 @@ object Prop {
   case class Prop(run: (MaxSize, TestCases, RNG) => Result) {
     def &&(p: Prop): Prop = Prop {
       (m, n, rng) =>
-        run(n, rng) match {
-          case Passed => p.run(n, rng)
+        run(m, n, rng) match {
+          case Passed => p.run(m, n, rng)
           case x => x
         }
     }
 
     def ||(p: Prop): Prop = Prop {
       (m, n, rng) =>
-        run(n, rng) match {
-          case Falsified(f, _) => p.run(n, rng) match {
+        run(m, n, rng) match {
+          case Falsified(f, _) => p.run(m, n, rng) match {
             case Falsified(f2, c) => Falsified(f + "\n" + f2, c)
             case x => x
           }
@@ -92,11 +91,14 @@ object Prop {
     Stream.unfold(rng)(rng => Some(g.sample.run(rng)))
 
   def forAll[A](as: Gen[A])(f: A => Boolean): Prop = Prop {
-    (m, n,rng) => randomStream(as)(rng).zip(Stream.from(0)).take(n).map {
-      case (a, i) => try {
-        if (f(a)) Passed else Falsified(a.toString, i)
-      } catch { case e: Exception => Falsified(buildMsg(a, e), i) }
-    }.find(_.isFalsified).getOrElse(Passed)
+    (m, n, rng) =>
+      randomStream(as)(rng).zip(Stream.from(0)).take(n).map {
+        case (a, i) => try {
+          if (f(a)) Passed else Falsified(a.toString, i)
+        } catch {
+          case e: Exception => Falsified(buildMsg(a, e), i)
+        }
+      }.find(_.isFalsified).getOrElse(Passed)
   }
 
   def buildMsg[A](s: A, e: Exception): String =
@@ -118,6 +120,12 @@ object Prop {
       prop.run(max, n, rng)
   }
 
+  def run(p: Prop, maxSize: MaxSize = 100, testCases: TestCases = 100, rng: RNG = SimpleRNG(System.currentTimeMillis())): Unit =
+    p.run(maxSize, testCases, rng) match {
+      case Falsified(msg, n) => println(s"! Falsified after $n passed tests:\n $msg")
+      case Passed => println(s"+ OK, passed $testCases tests.")
+    }
+
 }
 
 //trait Prop {
@@ -133,7 +141,8 @@ object Prop {
 
 object Gen {
 
-  def listOf[A](a: Gen[A]): Gen[List[A]] = ???
+  def listOf1[A](a: Gen[A]): SGen[List[A]] =
+    SGen(n => a.listOfN(n max 1))
 
   def listOfN[A](n: Int, a: Gen[A]): Gen[List[A]] =
     Gen(State.sequence(List.fill(n)(a.sample)))

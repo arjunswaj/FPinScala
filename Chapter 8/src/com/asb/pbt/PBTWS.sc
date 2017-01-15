@@ -1,4 +1,4 @@
-import com.asb.pbt.Gen
+import com.asb.pbt.{Gen, Prop}
 import com.asb.rng.SimpleRNG
 
 val rng = SimpleRNG(42)
@@ -27,3 +27,12 @@ Gen.listOfN(5, Gen.choose(1, 10)).sample.map {
   case i  if i.length < 2 => "Lol"
   case _ => "TeeHee"
 }.run(rng)
+
+val smallInt = Gen.choose(-10, 10)
+val maxProp = Prop.forAll(Gen.listOf(smallInt)) {
+  ns =>
+    val max = ns.max
+    !ns.exists(_ > max)
+}
+
+Prop.run(maxProp)
