@@ -133,6 +133,16 @@ object Prop {
   def equal[A](p: Par[A], p2: Par[A]): Par[Boolean] =
     Par.map2(p, p2)(_ == _)
 
+  def unit[A](a: => A): Gen[A] = Gen(State.unit(a))
+
+  def choose(start: Int, stopExclusive: Int): Gen[Int] =
+    Gen(State(random.nonNegativeInt).map(n => start + n % (stopExclusive - start)))
+
+  def weighted[A](g1: (Gen[A], Double), g2: (Gen[A], Double)): Gen[A] = {
+    val r1 = g1._2.abs / (g1._2.abs + g2._2.abs)
+    Gen(State(random.double)).flatMap(k => if (k < r1) g1._1 else g2._1)
+  }
+
   def run(p: Prop, maxSize: MaxSize = 100, testCases: TestCases = 100, rng: RNG = SimpleRNG(System.currentTimeMillis())): Unit =
     p.run(maxSize, testCases, rng) match {
       case Falsified(msg, n) => println(s"! Falsified after $n passed tests:\n $msg")
@@ -167,19 +177,9 @@ object Gen {
   def tuple2[A](a: Gen[A]): Gen[(A, A)] =
     Gen(State.sequence(List.fill(2)(a.sample)).map(list => (list.head, list(1))))
 
-  def choose(start: Int, stopExclusive: Int): Gen[Int] =
-    Gen(State(random.nonNegativeInt).map(n => start + n % (stopExclusive - start)))
-
-  def unit[A](a: => A): Gen[A] = Gen(State.unit(a))
-
   def boolean: Gen[Boolean] = Gen(State(random.boolean))
 
   def union[A](g1: Gen[A], g2: Gen[A]): Gen[A] =
     boolean.flatMap(b => if (b) g1 else g2)
-
-  def weighted[A](g1: (Gen[A], Double), g2: (Gen[A], Double)): Gen[A] = {
-    val r1 = g1._2.abs / (g1._2.abs + g2._2.abs)
-    Gen(State(random.double)).flatMap(k => if (k < r1) g1._1 else g2._1)
-  }
 
 }
