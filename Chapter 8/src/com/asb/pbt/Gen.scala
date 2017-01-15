@@ -1,5 +1,7 @@
 package com.asb.pbt
 
+import com.asb.parallelism.Par
+import com.asb.parallelism.Par.Par
 import com.asb.rng.{RNG, SimpleRNG, State, random}
 import com.asb.snl.Stream
 
@@ -127,6 +129,9 @@ object Prop {
   def check(p: => Boolean): Prop = Prop {
     (_, _, _) => if (p) Passed else Falsified(" () ", 0)
   }
+
+  def equal[A](p: Par[A], p2: Par[A]): Par[Boolean] =
+    Par.map2(p, p2)(_ == _)
 
   def run(p: Prop, maxSize: MaxSize = 100, testCases: TestCases = 100, rng: RNG = SimpleRNG(System.currentTimeMillis())): Unit =
     p.run(maxSize, testCases, rng) match {

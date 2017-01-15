@@ -1,3 +1,6 @@
+import java.util.concurrent.{ExecutorService, Executors}
+
+import com.asb.parallelism.Par
 import com.asb.pbt.{Gen, Prop}
 import com.asb.rng.SimpleRNG
 
@@ -54,3 +57,13 @@ val sortedProp = Prop.forAll(Gen.listOf(smallInt)) {
 }
 
 Prop.run(sortedProp)
+
+val ES: ExecutorService = Executors.newCachedThreadPool
+
+val p3 = Prop.check {
+  Prop.equal(
+    Par.map(Par.unit(1))(_ + 1),
+    Par.unit(2)
+  )(ES).get
+}
+p3.run(1, 1, rng)
