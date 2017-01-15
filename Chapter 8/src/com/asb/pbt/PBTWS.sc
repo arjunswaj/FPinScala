@@ -24,7 +24,7 @@ Gen.choose(2, 10).sample.map(i => Some(i)).run(rng)
 
 // Generate strings. Do they mean this?
 Gen.listOfN(5, Gen.choose(1, 10)).sample.map {
-  case i  if i.length < 2 => "Lol"
+  case i if i.length < 2 => "Lol"
   case _ => "TeeHee"
 }.run(rng)
 
@@ -44,3 +44,10 @@ val maxProp1 = Prop.forAll(Gen.listOf1(smallInt)) {
 }
 
 Prop.run(maxProp1)
+
+val sortedProp = Prop.forAll(Gen.listOf(smallInt)) {
+  l =>
+    l.sorted.foldLeft((Int.MinValue, true))((acc, ele) => (ele, acc._2 && acc._1 <= ele))._2
+}
+
+Prop.run(sortedProp)
