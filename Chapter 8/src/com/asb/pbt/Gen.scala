@@ -66,11 +66,15 @@ object Prop {
     def isFalsified = true
   }
 
+  case object Proved extends Result {
+    def isFalsified = false
+  }
+
   case class Prop(run: (MaxSize, TestCases, RNG) => Result) {
     def &&(p: Prop): Prop = Prop {
       (m, n, rng) =>
         run(m, n, rng) match {
-          case Passed => p.run(m, n, rng)
+          case Passed | Proved => p.run(m, n, rng)
           case x => x
         }
     }
@@ -120,10 +124,15 @@ object Prop {
       prop.run(max, n, rng)
   }
 
+  def check(p: => Boolean): Prop = Prop {
+    (_, _, _) => if (p) Passed else Falsified(" () ", 0)
+  }
+
   def run(p: Prop, maxSize: MaxSize = 100, testCases: TestCases = 100, rng: RNG = SimpleRNG(System.currentTimeMillis())): Unit =
     p.run(maxSize, testCases, rng) match {
       case Falsified(msg, n) => println(s"! Falsified after $n passed tests:\n $msg")
       case Passed => println(s"+ OK, passed $testCases tests.")
+      case Proved => println(s"+ OK, proved property.")
     }
 
 }
