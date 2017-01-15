@@ -1,5 +1,7 @@
 package com.asb.pbt
 
+import java.util.concurrent.Executors
+
 import com.asb.parallelism.Par
 import com.asb.parallelism.Par.Par
 import com.asb.rng.{RNG, SimpleRNG, State, random}
@@ -12,6 +14,9 @@ import com.asb.snl.Stream
 case class Gen[A](sample: State[RNG, A]) {
   def map[B](f: A => B): Gen[B] =
     Gen(sample.map(a => f(a)))
+
+  def map2[B, C](g: Gen[B])(f: (A, B) => C): Gen[C] =
+    Gen(sample.flatMap(a => g.sample.map(b => f(a, b))))
 
   def flatMap[B](f: A => Gen[B]): Gen[B] =
     Gen(sample.flatMap(a => f(a).sample))
@@ -142,6 +147,12 @@ object Prop {
     val r1 = g1._2.abs / (g1._2.abs + g2._2.abs)
     Gen(State(random.double)).flatMap(k => if (k < r1) g1._1 else g2._1)
   }
+
+  val S = weighted(choose(1, 4).map(Executors.newFixedThreadPool) -> 0.75,
+    unit(Executors.newCachedThreadPool) -> 0.25)
+
+  def forAllPar[A](g: Gen[A])(f: A => Par[Boolean]): Prop =
+    forAll(S.map2(g)((es, a) => (es, a))) { case (es, a) => f(a)(es).get }
 
   def run(p: Prop, maxSize: MaxSize = 100, testCases: TestCases = 100, rng: RNG = SimpleRNG(System.currentTimeMillis())): Unit =
     p.run(maxSize, testCases, rng) match {
