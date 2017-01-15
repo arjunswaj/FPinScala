@@ -67,3 +67,11 @@ val p3 = Prop.check {
   )(ES).get
 }
 p3.run(1, 1, rng)
+
+val p2 = Prop.checkPar{
+  Prop.equal(
+    Par.map(Par.unit(1))(_ + 1),
+    Par.unit(2)
+  )
+}
+p2.run(1, 1, rng)

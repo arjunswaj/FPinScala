@@ -138,6 +138,9 @@ object Prop {
     (_, _, _) => if (p) Passed else Falsified(" () ", 0)
   }
 
+  def checkPar(p: Par[Boolean]): Prop =
+    forAllPar(unit(()))(_ => p)
+
   def equal[A](p: Par[A], p2: Par[A]): Par[Boolean] =
     Par.map2(p, p2)(_ == _)
 
