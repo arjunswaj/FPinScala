@@ -31,8 +31,9 @@ Gen.listOfN(5, Gen.choose(1, 10)).sample.map {
 val smallInt = Gen.choose(-10, 10)
 val maxProp = Prop.forAll(Gen.listOf(smallInt)) {
   ns =>
-    val max = ns.max
+    val max = if (ns.isEmpty) 0 else ns.max
     !ns.exists(_ > max)
 }
 
 Prop.run(maxProp)
+
