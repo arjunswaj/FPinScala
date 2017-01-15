@@ -28,6 +28,9 @@ case class Gen[A](sample: State[RNG, A]) {
     size flatMap (i => listOfN(i))
 
   def unsized: SGen[A] = SGen(i => this)
+
+  def **[B](g: Gen[B]): Gen[(A, B)] =
+    (this map2 g)((a, b) => (a, b))
 }
 
 case class SGen[A](forSize: Int => Gen[A]) {
@@ -152,7 +155,7 @@ object Prop {
     unit(Executors.newCachedThreadPool) -> 0.25)
 
   def forAllPar[A](g: Gen[A])(f: A => Par[Boolean]): Prop =
-    forAll(S.map2(g)((es, a) => (es, a))) { case (es, a) => f(a)(es).get }
+    forAll(S ** g) { case es ** a => f(a)(es).get }
 
   def run(p: Prop, maxSize: MaxSize = 100, testCases: TestCases = 100, rng: RNG = SimpleRNG(System.currentTimeMillis())): Unit =
     p.run(maxSize, testCases, rng) match {
@@ -193,4 +196,8 @@ object Gen {
   def union[A](g1: Gen[A], g2: Gen[A]): Gen[A] =
     boolean.flatMap(b => if (b) g1 else g2)
 
+}
+
+object ** {
+  def unapply[A, B](p: (A, B)) = Some(p)
 }
