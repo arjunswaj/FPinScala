@@ -16,6 +16,10 @@ trait Parsers[ParseError, Parser[+ _]] {
 
   def listOfN[A](n: Int, p: Parser[A]): Parser[List[A]]
 
+  def many[A](p: Parser[A]): Parser[List[A]]
+
+  def map[A, B](a: Parser[A])(f: A => B): Parser[B]
+
   implicit def string(s: String): Parser[String]
 
   implicit def operators[A](p: Parser[A]): ParserOps[A] = ParserOps[A](p)
@@ -26,6 +30,10 @@ trait Parsers[ParseError, Parser[+ _]] {
     def |[B >: A](p2: Parser[B]): Parser[B] = self.or(p, p2)
 
     def or[B >: A](p2: => Parser[B]): Parser[B] = self.or(p, p2)
+
+    def map[B](f: A => B): Parser[B] = self.map(p)(f)
+
+    def many: Parser[List[A]] = self.many(p)
   }
 
 }
