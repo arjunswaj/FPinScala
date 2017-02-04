@@ -1,6 +1,8 @@
 package com.asb.parsers
 
 import com.asb.error.Either
+import com.asb.pbt
+import com.asb.pbt.Gen
 
 /**
   * Parsers.
@@ -34,6 +36,17 @@ trait Parsers[ParseError, Parser[+ _]] {
     def map[B](f: A => B): Parser[B] = self.map(p)(f)
 
     def many: Parser[List[A]] = self.many(p)
+  }
+
+  object Laws {
+
+    import pbt.Prop._
+
+    def equal[A](p1: Parser[A], p2: Parser[A])(in: Gen[String]): Prop =
+      forAll(in)(s => run(p1)(s) == run(p2)(s))
+
+    def mapLaw[A](p: Parser[A])(in: Gen[String]): Prop =
+      equal(p, p.map(a => a))(in)
   }
 
 }
