@@ -24,7 +24,8 @@ trait Parsers[ParseError, Parser[+ _]] {
 
   def listOfN[A](n: Int, p: Parser[A]): Parser[List[A]]
 
-  def many[A](p: Parser[A]): Parser[List[A]]
+  def many[A](p: Parser[A]): Parser[List[A]] =
+    map2(p, many(p))(_ :: _) or succeed(List())
 
   def many1[A](p: Parser[A]): Parser[List[A]] =
     map2(p, many(p))((a, b) => a :: b)
