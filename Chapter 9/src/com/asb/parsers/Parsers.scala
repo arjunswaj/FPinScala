@@ -15,6 +15,9 @@ trait Parsers[ParseError, Parser[+ _]] {
   def char(c: Char): Parser[Char] =
     string(c.toString).map(_.charAt(0))
 
+  def succeed[A](a: A): Parser[A] =
+    string("") map (_ => a)
+
   def or[A](s1: Parser[A], s2: Parser[A]): Parser[A]
 
   def listOfN[A](n: Int, p: Parser[A]): Parser[List[A]]
