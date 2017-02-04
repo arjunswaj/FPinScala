@@ -32,6 +32,9 @@ trait Parsers[ParseError, Parser[+ _]] {
 
   def map[A, B](a: Parser[A])(f: A => B): Parser[B]
 
+  def map2[A, B, C](a: Parser[A], b: Parser[B])(f: (A, B) => C): Parser[C] =
+    this.product(a, b).map(k => f(k._1, k._2))
+
   implicit def string(s: String): Parser[String]
 
   implicit def operators[A](p: Parser[A]): ParserOps[A] = ParserOps[A](p)
