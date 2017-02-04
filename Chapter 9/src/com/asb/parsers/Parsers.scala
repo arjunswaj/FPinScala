@@ -26,6 +26,8 @@ trait Parsers[ParseError, Parser[+ _]] {
 
   def many[A](p: Parser[A]): Parser[List[A]]
 
+  def many1[A](p: Parser[A]): Parser[List[A]]
+
   def slice[A](p: Parser[A]): Parser[String]
 
   def map[A, B](a: Parser[A])(f: A => B): Parser[B]
