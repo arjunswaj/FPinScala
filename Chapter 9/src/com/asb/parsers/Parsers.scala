@@ -14,6 +14,8 @@ trait Parsers[ParseError, Parser[+ _]] {
 
   def or[A](s1: Parser[A], s2: Parser[A]): Parser[A]
 
+  def listOfN[A](n: Int, p: Parser[A]): Parser[List[A]]
+
   implicit def string(s: String): Parser[String]
 
   implicit def operators[A](p: Parser[A]): ParserOps[A] = ParserOps[A](p)
