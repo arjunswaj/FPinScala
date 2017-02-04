@@ -24,6 +24,8 @@ trait Parsers[ParseError, Parser[+ _]] {
 
   def many[A](p: Parser[A]): Parser[List[A]]
 
+  def slice[A](p: Parser[A]): Parser[String]
+
   def map[A, B](a: Parser[A])(f: A => B): Parser[B]
 
   implicit def string(s: String): Parser[String]
@@ -40,6 +42,8 @@ trait Parsers[ParseError, Parser[+ _]] {
     def map[B](f: A => B): Parser[B] = self.map(p)(f)
 
     def many: Parser[List[A]] = self.many(p)
+
+    def slice: Parser[String] = self.slice(p)
   }
 
   object Laws {
