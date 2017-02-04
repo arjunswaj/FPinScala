@@ -20,6 +20,8 @@ trait Parsers[ParseError, Parser[+ _]] {
 
   def or[A](s1: Parser[A], s2: Parser[A]): Parser[A]
 
+  def product[A, B](s1: Parser[A], s2: Parser[B]): Parser[(A, B)]
+
   def listOfN[A](n: Int, p: Parser[A]): Parser[List[A]]
 
   def many[A](p: Parser[A]): Parser[List[A]]
@@ -38,6 +40,10 @@ trait Parsers[ParseError, Parser[+ _]] {
     def |[B >: A](p2: Parser[B]): Parser[B] = self.or(p, p2)
 
     def or[B >: A](p2: => Parser[B]): Parser[B] = self.or(p, p2)
+
+    def **[B](p2: Parser[B]): Parser[(A, B)] = self.product(p, p2)
+
+    def product[B](p2: Parser[B]): Parser[(A, B)] = self.product(p, p2)
 
     def map[B](f: A => B): Parser[B] = self.map(p)(f)
 
