@@ -44,7 +44,7 @@ trait Parsers[ParseError, Parser[+ _]] {
   def flatMap[A, B](a: Parser[A])(f: A => Parser[B]): Parser[B]
 
   def map2[A, B, C](a: Parser[A], b: => Parser[B])(f: (A, B) => C): Parser[C] =
-    this.product(a, b).map(k => f(k._1, k._2))
+    flatMap(a)(p1 => map(b)(p2 => f(p1, p2)))
 
   implicit def string(s: String): Parser[String]
 
