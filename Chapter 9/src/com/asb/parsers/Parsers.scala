@@ -4,6 +4,8 @@ import com.asb.error.Either
 import com.asb.pbt
 import com.asb.pbt.Gen
 
+import scala.util.matching.Regex
+
 /**
   * Parsers.
   * Created by arjun on 28/01/17.
@@ -46,6 +48,8 @@ trait Parsers[ParseError, Parser[+ _]] {
   implicit def string(s: String): Parser[String]
 
   implicit def operators[A](p: Parser[A]): ParserOps[A] = ParserOps[A](p)
+
+  implicit def regex(r: Regex): Parser[String]
 
   implicit def asStringParser[A](a: A)(implicit f: A => Parser[String]): ParserOps[String] = ParserOps(f(a))
 
