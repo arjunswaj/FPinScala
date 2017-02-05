@@ -38,7 +38,8 @@ trait Parsers[ParseError, Parser[+ _]] {
 
   def slice[A](p: Parser[A]): Parser[String]
 
-  def map[A, B](a: Parser[A])(f: A => B): Parser[B]
+  def map[A, B](a: Parser[A])(f: A => B): Parser[B] =
+    flatMap(a)(p1 => succeed(f(p1)))
 
   // Needed for Context Sensitive Grammars.
   def flatMap[A, B](a: Parser[A])(f: A => Parser[B]): Parser[B]
