@@ -37,6 +37,9 @@ trait Parsers[ParseError, Parser[+ _]] {
 
   def map[A, B](a: Parser[A])(f: A => B): Parser[B]
 
+  // Needed for Context Sensitive Grammars.
+  def flatMap[A, B](a: Parser[A])(f: A => Parser[B]): Parser[B]
+
   def map2[A, B, C](a: Parser[A], b: => Parser[B])(f: (A, B) => C): Parser[C] =
     this.product(a, b).map(k => f(k._1, k._2))
 
@@ -56,6 +59,8 @@ trait Parsers[ParseError, Parser[+ _]] {
     def product[B](p2: Parser[B]): Parser[(A, B)] = self.product(p, p2)
 
     def map[B](f: A => B): Parser[B] = self.map(p)(f)
+
+    def flatMap[B](f: A => Parser[B]): Parser[B] = self.flatMap(p)(f)
 
     def many: Parser[List[A]] = self.many(p)
 
