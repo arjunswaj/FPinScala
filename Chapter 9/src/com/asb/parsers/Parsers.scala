@@ -22,7 +22,8 @@ trait Parsers[ParseError, Parser[+ _]] {
 
   def or[A](s1: Parser[A], s2: => Parser[A]): Parser[A]
 
-  def product[A, B](s1: Parser[A], s2: => Parser[B]): Parser[(A, B)]
+  def product[A, B](s1: Parser[A], s2: => Parser[B]): Parser[(A, B)] =
+    flatMap(s1)(a => map(s2)(b => (a, b)))
 
   def listOfN[A](n: Int, p: Parser[A]): Parser[List[A]] =
     if (n <= 0) succeed(List())
