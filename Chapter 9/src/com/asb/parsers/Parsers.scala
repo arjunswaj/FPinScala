@@ -59,6 +59,9 @@ trait Parsers[ParseError, Parser[+ _]] {
   def skipR[A](p: Parser[A], p2: => Parser[Any]): Parser[A] =
     map2(p, slice(p2))((a, _) => a)
 
+  def opt[A](p: Parser[A]): Parser[Option[A]] =
+    p.map(Some(_)) or succeed(None)
+
   implicit def string(s: String): Parser[String]
 
   implicit def operators[A](p: Parser[A]): ParserOps[A] = ParserOps[A](p)
