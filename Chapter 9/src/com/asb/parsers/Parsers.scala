@@ -53,6 +53,12 @@ trait Parsers[ParseError, Parser[+ _]] {
 
   def attempt[A](p: Parser[A]): Parser[A]
 
+  def skipL[B](p: Parser[Any], p2: => Parser[B]): Parser[B] =
+    map2(slice(p), p2)((_, b) => b)
+
+  def skipR[A](p: Parser[A], p2: => Parser[Any]): Parser[A] =
+    map2(p, slice(p2))((a, _) => a)
+
   implicit def string(s: String): Parser[String]
 
   implicit def operators[A](p: Parser[A]): ParserOps[A] = ParserOps[A](p)
