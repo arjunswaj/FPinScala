@@ -62,6 +62,10 @@ trait Parsers[ParseError, Parser[+ _]] {
   def opt[A](p: Parser[A]): Parser[Option[A]] =
     p.map(Some(_)) or succeed(None)
 
+  def whitespace: Parser[String] = "\\s*".r
+
+  def digits: Parser[String] = "\\d+".r
+
   implicit def string(s: String): Parser[String]
 
   implicit def operators[A](p: Parser[A]): ParserOps[A] = ParserOps[A](p)
