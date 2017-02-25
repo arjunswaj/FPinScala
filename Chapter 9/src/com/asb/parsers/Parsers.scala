@@ -12,7 +12,7 @@ import scala.util.matching.Regex
   * Parsers.
   * Created by arjun on 28/01/17.
   */
-trait Parsers[ParseError, Parser[+ _]] {
+trait Parsers[Parser[+ _]] {
   self =>
   def run[A](p: Parser[A])(input: String): Either[ParseError, A]
 
@@ -77,7 +77,7 @@ trait Parsers[ParseError, Parser[+ _]] {
   def doubleString: Parser[String] =
     token("[-+]?([0-9]*\\.)?[0-9]+([eE][-+]?[0-9]+)?".r)
 
-  def double : Parser[Double] =
+  def double: Parser[Double] =
     doubleString map (_.toDouble) label "double literal"
 
   def token[A](p: Parser[A]): Parser[A] = attempt(p) <* whitespace
@@ -88,8 +88,8 @@ trait Parsers[ParseError, Parser[+ _]] {
   def sep1[A](p: Parser[A], p2: Parser[Any]): Parser[List[A]] =
     map2(p, many(p2 *> p))(_ :: _)
 
-  def opL[A](p: Parser[A])(op: Parser[(A,A) => A]): Parser[A] =
-    map2(p, many(op ** p))((h,t) => t.foldLeft(h)((a,b) => b._1(a,b._2)))
+  def opL[A](p: Parser[A])(op: Parser[(A, A) => A]): Parser[A] =
+    map2(p, many(op ** p))((h, t) => t.foldLeft(h)((a, b) => b._1(a, b._2)))
 
   def surround[A](start: Parser[Any], stop: Parser[Any])(p: => Parser[A]): Parser[A] =
     start *> p <* stop
@@ -142,7 +142,7 @@ trait Parsers[ParseError, Parser[+ _]] {
 
     def scope(msg: String): Parser[A] = self.scope(msg)(p)
 
-    def opL(op: Parser[(A,A) => A]): Parser[A] = self.opL(p)(op)
+    def opL(op: Parser[(A, A) => A]): Parser[A] = self.opL(p)(op)
 
   }
 
@@ -156,5 +156,76 @@ trait Parsers[ParseError, Parser[+ _]] {
     def mapLaw[A](p: Parser[A])(in: Gen[String]): Prop =
       equal(p, p.map(a => a))(in)
   }
+
+}
+
+case class Location(input: String, offset: Int = 0) {
+
+  lazy val line = input.slice(0, offset + 1).count(_ == '\n') + 1
+  lazy val col = input.slice(0, offset + 1).lastIndexOf('\n') match {
+    case -1 => offset + 1
+    case lineStart => offset - lineStart
+  }
+
+  def toError(msg: String): ParseError =
+    ParseError(List((this, msg)))
+
+  def advanceBy(n: Int) = copy(offset = offset + n)
+
+  /* Returns the line corresponding to this location */
+  def currentLine: String =
+    if (input.length > 1) input.lines.drop(line - 1).next
+    else ""
+
+  def columnCaret = (" " * (col - 1)) + "^"
+}
+
+case class ParseError(stack: List[(Location, String)] = List()) {
+  def push(loc: Location, msg: String): ParseError =
+    copy(stack = (loc, msg) :: stack)
+
+  def label[A](s: String): ParseError =
+    ParseError(latestLoc.map((_, s)).toList)
+
+  def latest: Option[(Location, String)] =
+    stack.lastOption
+
+  def latestLoc: Option[Location] =
+    latest map (_._1)
+
+  /**
+    * Display collapsed error stack - any adjacent stack elements with the
+    * same location are combined on one line. For the bottommost error, we
+    * display the full line, with a caret pointing to the column of the error.
+    * Example:
+    *1.1 file 'companies.json'; array
+    *5.1 object
+    *5.2 key-value
+    *5.10 ':'
+    * { "MSFT" ; 24,
+    */
+  override def toString =
+    if (stack.isEmpty) "no error message"
+    else {
+      val collapsed = collapseStack(stack)
+      val context =
+        collapsed.lastOption.map("\n\n" + _._1.currentLine).getOrElse("") +
+          collapsed.lastOption.map("\n" + _._1.columnCaret).getOrElse("")
+      collapsed.map { case (loc, msg) => loc.line.toString + "." + loc.col + " " + msg }.mkString("\n") +
+        context
+    }
+
+  /* Builds a collapsed version of the given error stack -
+   * messages at the same location have their messages merged,
+   * separated by semicolons */
+  def collapseStack(s: List[(Location, String)]): List[(Location, String)] =
+    s.groupBy(_._1).
+      mapValues(_.map(_._2).mkString("; ")).
+      toList.sortBy(_._1.offset)
+
+  def formatLoc(l: Location): String = l.line + "." + l.col
+}
+
+object Parsers {
 
 }
