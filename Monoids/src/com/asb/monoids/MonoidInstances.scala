@@ -56,4 +56,10 @@ object MonoidInstances {
   def firstOptionMonoid[A]: Monoid[Option[A]] = optionMonoid[A]
 
   def lastOptionMonoid[A]: Monoid[Option[A]] = dual(firstOptionMonoid)
+
+  def endoMonoid[A]: Monoid[A => A] = new Monoid[(A) => A] {
+    override def op(f: (A) => A, g: (A) => A): (A) => A = f compose g
+
+    override def zero: (A) => A = (a: A) => a
+  }
 }
