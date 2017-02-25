@@ -40,4 +40,20 @@ object MonoidInstances {
 
     override def zero = true
   }
+
+  def optionMonoid[A]: Monoid[Option[A]] = new Monoid[Option[A]] {
+    override def op(a1: Option[A], a2: Option[A]): Option[A] = a1 orElse a2
+
+    override def zero = None
+  }
+
+  def dual[A](m: Monoid[A]): Monoid[A] = new Monoid[A] {
+    override def op(a1: A, a2: A): A = m.op(a2, a1)
+
+    override def zero: A = m.zero
+  }
+
+  def firstOptionMonoid[A]: Monoid[Option[A]] = optionMonoid[A]
+
+  def lastOptionMonoid[A]: Monoid[Option[A]] = dual(firstOptionMonoid)
 }
