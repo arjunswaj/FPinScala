@@ -66,6 +66,8 @@ trait Parsers[ParseError, Parser[+ _]] {
 
   def digits: Parser[String] = "\\d+".r
 
+  def token[A](p: Parser[A]): Parser[A] = attempt(p) <* whitespace
+
   implicit def string(s: String): Parser[String]
 
   implicit def operators[A](p: Parser[A]): ParserOps[A] = ParserOps[A](p)
@@ -90,6 +92,13 @@ trait Parsers[ParseError, Parser[+ _]] {
     def many: Parser[List[A]] = self.many(p)
 
     def slice: Parser[String] = self.slice(p)
+
+    def token: Parser[A] = self.token(p)
+
+    def *>[B](p2: Parser[B]): Parser[B] = self.skipL(p, p2)
+
+    def <*(p2: Parser[Any]): Parser[A] = self.skipR(p, p2)
+
   }
 
   object Laws {
