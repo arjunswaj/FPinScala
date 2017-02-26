@@ -79,4 +79,11 @@ object MonoidInstances {
   def foldRight[A, B](as: List[A])(z: B)(f: (A, B) => B): B =
     foldMap(as, dual(endoMonoid[B]))(a => b => f(a, b))(z)
 
+  def foldMapV[A, B](as: IndexedSeq[A], m: Monoid[B])(f: A => B): B = as match {
+    case Seq.empty => m.zero
+    case a +: Seq.empty => f(a)
+    case _ => val (l, r) = as.splitAt(as.length / 2)
+      m.op(foldMapV(l, m)(f), foldMapV(r, m)(f))
+  }
+
 }
