@@ -62,4 +62,8 @@ object MonoidInstances {
 
     override def zero: (A) => A = (a: A) => a
   }
+
+  val words = List("Hello", "There", "World")
+  val s: String = words.foldLeft(stringMonoid.zero)(stringMonoid.op)
+  val t: String = words.foldRight(stringMonoid.zero)(stringMonoid.op)
 }
