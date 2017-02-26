@@ -2,6 +2,7 @@ package com.asb.monoids
 
 import com.asb.pbt.Gen
 import com.asb.pbt.Prop._
+import language.higherKinds
 
 /**
   * Created by arjun on 25/02/17.
