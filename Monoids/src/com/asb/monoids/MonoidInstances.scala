@@ -73,4 +73,10 @@ object MonoidInstances {
   def foldMap[A, B](as: List[A], m: Monoid[B])(f: A => B): B =
     as.map(f(_)).foldLeft(m.zero)(m.op)
 
+  def foldLeft[A, B](as: List[A])(z: B)(f: (A, B) => B): B =
+    foldMap(as, endoMonoid[B])(f.curried)(z)
+
+  def foldRight[A, B](as: List[A])(z: B)(f: (A, B) => B): B =
+    foldMap(as, dual(endoMonoid[B]))(a => b => f(a, b))(z)
+
 }
