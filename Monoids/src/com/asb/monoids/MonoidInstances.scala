@@ -66,4 +66,8 @@ object MonoidInstances {
   val words = List("Hello", "There", "World")
   val s: String = words.foldLeft(stringMonoid.zero)(stringMonoid.op)
   val t: String = words.foldRight(stringMonoid.zero)(stringMonoid.op)
+
+  def concatenate[A](as: List[A], m: Monoid[A]): A =
+    as.foldLeft(m.zero)(m.op)
+
 }
