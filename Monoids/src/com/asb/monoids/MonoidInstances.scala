@@ -1,5 +1,7 @@
 package com.asb.monoids
 
+import com.asb.parallelism.NonBlocking.Par
+
 /**
   * Created by arjun on 25/02/17.
   */
@@ -84,6 +86,12 @@ object MonoidInstances {
     case a +: Seq.empty => f(a)
     case _ => val (l, r) = as.splitAt(as.length / 2)
       m.op(foldMapV(l, m)(f), foldMapV(r, m)(f))
+  }
+
+  def par[A](m: Monoid[A]): Monoid[Par[A]] = new Monoid[Par[A]] {
+    override def op(a1: Par[A], a2: Par[A]) = Par.map2(a1, a2)((a, b) => m.op(a, b))
+
+    override def zero = Par.unit(m.zero)
   }
 
 }
