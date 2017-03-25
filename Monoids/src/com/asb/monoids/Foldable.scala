@@ -23,3 +23,16 @@ object ListFoldable extends Foldable[List] {
     foldRight(as)(mb.zero)((a, b) => mb.op(f(a), b))
 
 }
+
+object StreamFoldable extends Foldable[Stream] {
+
+  def foldRight[A, B](as: Stream[A])(z: B)(f: (A, B) => B): B =
+    as.foldRight(z)(f)
+
+  def foldLeft[A, B](as: Stream[A])(z: B)(f: (B, A) => B): B =
+    as.foldLeft(z)(f)
+
+  def foldMap[A, B](as: Stream[A])(f: (A) => B)(mb: Monoid[B]): B =
+    foldLeft(as)(mb.zero)((a, b) => mb.op(a, f(b)))
+
+}
