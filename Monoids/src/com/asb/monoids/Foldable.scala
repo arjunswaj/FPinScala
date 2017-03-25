@@ -61,3 +61,22 @@ object TreeFoldable extends Foldable[Tree] {
   }
 
 }
+
+object OptionFoldable extends Foldable[Option] {
+
+  def foldRight[A, B](as: Option[A])(z: B)(f: (A, B) => B): B = as match {
+    case None => z
+    case Some(value) => f(value, z)
+  }
+
+  def foldLeft[A, B](as: Option[A])(z: B)(f: (B, A) => B): B = as match {
+    case None => z
+    case Some(value) => f(z, value)
+  }
+
+  def foldMap[A, B](as: Option[A])(f: (A) => B)(mb: Monoid[B]): B = as match {
+    case None => mb.zero
+    case Some(value) => f(value)
+  }
+
+}
