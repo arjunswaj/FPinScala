@@ -1,5 +1,7 @@
 package com.asb.monoids
 
+import scala.Predef.augmentString
+
 sealed trait WC
 
 case class Stub(chars: String) extends WC
@@ -17,5 +19,22 @@ object WC {
     }
 
     def zero: WC = Stub("")
+  }
+
+  import MonoidInstances._
+
+  def count(s: String): Int = {
+    def wc(c: Char): WC =
+      if (c.isWhitespace)
+        Part("", 0, "")
+      else
+        Stub(c.toString)
+
+    def unStub(s: String) = s.length min 1
+
+    foldMapV(s.toIndexedSeq, wcMonoid)(wc) match {
+      case Stub(c) => unStub(c)
+      case Part(l, w, r) => unStub(l) + w + unStub(r)
+    }
   }
 }
