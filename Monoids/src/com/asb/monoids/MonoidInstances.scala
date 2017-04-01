@@ -114,4 +114,11 @@ object MonoidInstances {
     foldMapV(ints, mon)(i => Some((i, i, true))).map(o => o._3).getOrElse(true)
   }
 
+  def productMonoid[A, B](a: Monoid[A], b: Monoid[B]): Monoid[(A, B)] =
+    new Monoid[(A, B)] {
+      def op(a1: (A, B), a2: (A, B)): (A, B) = (a.op(a1._1, a2._1), b.op(a1._2, a2._2))
+
+      def zero: (A, B) = (a.zero, b.zero)
+    }
+
 }
