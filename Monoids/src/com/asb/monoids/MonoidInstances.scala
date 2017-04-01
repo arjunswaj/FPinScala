@@ -135,4 +135,6 @@ object MonoidInstances {
     def zero: Map[K, V] = Map[K, V]()
   }
 
+  val M: Monoid[Map[String, Map[String, Int]]] = mapMergeMonoid(mapMergeMonoid(intAddition))
+
 }
