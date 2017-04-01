@@ -25,12 +25,12 @@ object WC {
 
   def count(s: String): Int = {
     def wc(c: Char): WC =
-      if (c.isWhitespace)
+      if (Character.isWhitespace(c))
         Part("", 0, "")
       else
         Stub(c.toString)
 
-    def unStub(s: String) = s.length min 1
+    def unStub(s: String) = Math.min(s.length, 1)
 
     foldMapV(s.toIndexedSeq, wcMonoid)(wc) match {
       case Stub(c) => unStub(c)

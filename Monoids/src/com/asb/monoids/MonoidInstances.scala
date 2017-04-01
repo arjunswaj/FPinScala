@@ -82,8 +82,8 @@ object MonoidInstances {
     foldMap(as, dual(endoMonoid[B]))(a => b => f(a, b))(z)
 
   def foldMapV[A, B](as: IndexedSeq[A], m: Monoid[B])(f: A => B): B = as match {
-    case Seq.empty => m.zero
-    case a +: Seq.empty => f(a)
+    case Seq() => m.zero
+    case a +: Seq() => f(a)
     case _ => val (l, r) = as.splitAt(as.length / 2)
       m.op(foldMapV(l, m)(f), foldMapV(r, m)(f))
   }
@@ -136,5 +136,8 @@ object MonoidInstances {
   }
 
   val M: Monoid[Map[String, Map[String, Int]]] = mapMergeMonoid(mapMergeMonoid(intAddition))
+
+  def bag[A](as: IndexedSeq[A]): Map[A, Int] =
+    foldMapV(as, mapMergeMonoid[A, Int](intAddition))((a: A) => Map(a -> 1))
 
 }
