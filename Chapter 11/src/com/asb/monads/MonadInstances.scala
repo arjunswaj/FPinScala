@@ -4,6 +4,7 @@ import com.asb.ds.List
 import com.asb.error.{Option, Some}
 import com.asb.parallelism.NonBlocking.Par
 import com.asb.pbt.{Gen, Prop}
+import com.asb.rng.State
 import com.asb.snl.Stream
 
 object MonadInstances {
@@ -40,6 +41,17 @@ object MonadInstances {
 
     def flatMap[A, B](fa: List[A])(f: (A) => List[B]): List[B] =
       List.flatMap(fa)(f)
+  }
+
+  class StateMonads[S] {
+    type StateS[A] = State[S, A]
+
+    val stateMonad = new Monad[StateS] {
+      def unit[A](a: => A): StateS[A] = State.unit(a)
+
+      def flatMap[A, B](fa: StateS[A])(f: (A) => StateS[B]): StateS[B] =
+        fa flatMap f
+    }
   }
 
 }
