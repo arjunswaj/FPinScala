@@ -1,6 +1,8 @@
 package com.asb.monads
 
-trait Monad[F[_]] {
+import com.asb.functors.Functor
+
+trait Monad[F[_]] extends Functor[F]{
 
   def unit[A](a: => A): F[A]
 
