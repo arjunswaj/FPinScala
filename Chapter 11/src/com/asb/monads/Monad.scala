@@ -23,4 +23,7 @@ trait Monad[F[_]] extends Functor[F] {
   def replicateM[A](n: Int, ma: F[A]): F[List[A]] =
     flatMap(ma)(a => unit(List.fill[A](n)(a)))
 
+  def product[A, B](ma: F[A], mb: F[B]): F[(A, B)] =
+    map2(ma, mb)((_, _))
+
 }
