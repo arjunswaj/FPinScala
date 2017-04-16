@@ -20,4 +20,7 @@ trait Monad[F[_]] extends Functor[F] {
   def traverse[A, B](la: List[A])(f: A => F[B]): F[List[B]] =
     la.foldRight(unit(List[B]()))((c, d) => map2(f(c), d)(_ :: _))
 
+  def replicateM[A](n: Int, ma: F[A]): F[List[A]] =
+    flatMap(ma)(a => unit(List.fill[A](n)(a)))
+
 }
