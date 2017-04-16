@@ -2,7 +2,7 @@ package com.asb.monads
 
 import com.asb.functors.Functor
 
-trait Monad[F[_]] extends Functor[F]{
+trait Monad[F[_]] extends Functor[F] {
 
   def unit[A](a: => A): F[A]
 
@@ -13,5 +13,8 @@ trait Monad[F[_]] extends Functor[F]{
 
   def map2[A, B, C](fa: F[A], fb: F[B])(f: (A, B) => C): F[C] =
     flatMap(fa)(a => map(fb)(b => f(a, b)))
+
+  def sequence[A](lma: List[F[A]]): F[List[A]] =
+    lma.foldRight(unit(List[A]()))(map2(_, _)(_ :: _))
 
 }
