@@ -50,4 +50,7 @@ trait Monad[F[_]] extends Functor[F] {
   def flatMapAsJoin[A, B](fa: F[A])(f: A => F[B]): F[B] =
     join(map(fa)(k => f(k)))
 
+  def composeAsJoin[A, B, C](f: A => F[B], g: B => F[C]): A => F[C] =
+    a => join(map(f(a))(b => map(g(b))(c => c)))
+
 }
