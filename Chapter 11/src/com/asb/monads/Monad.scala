@@ -1,6 +1,7 @@
 package com.asb.monads
 
 import com.asb.functors.Functor
+import com.asb.rng.State
 
 trait Monad[F[_]] extends Functor[F] {
 
@@ -67,4 +68,10 @@ object Id {
 
     def flatMap[A, B](fa: Id[A])(f: (A) => Id[B]): Id[B] = fa flatMap f
   }
+}
+
+object IntStateMonad extends Monad[({type IntState[A] = State[Int, A]})#IntState] {
+  def unit[A](a: => A): State[Int, A] = State(s => (a, s))
+
+  def flatMap[A, B](fa: State[Int, A])(f: (A) => State[Int, B]): State[Int, B] = fa flatMap f
 }
