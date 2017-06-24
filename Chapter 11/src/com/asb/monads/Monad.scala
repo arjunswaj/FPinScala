@@ -102,4 +102,12 @@ object monads {
       _ <- setState(n + 1)
     } yield (n, a) :: xs).run(0)._1.reverse
 
+  case class Reader[R, A](run: R => A)
+
+  def readerMonad[R] = new Monad[({type f[x] = Reader[R, x]})#f] {
+    def unit[A](a: => A): Reader[R, A] = Reader(_ => a)
+
+    def flatMap[A, B](fa: Reader[R, A])(f: (A) => Reader[R, B]): Reader[R, B] =
+      Reader(r => f(fa.run(r)).run(r))
+  }
 }
