@@ -82,4 +82,10 @@ object monads {
 
     def flatMap[A, B](fa: State[S, A])(f: (A) => State[S, B]): State[S, B] = fa flatMap f
   }
+
+  val stringStateMonad = stateMonad[String]
+
+  val replicate = stringStateMonad.replicateM(5, State.unit("Hello"))
+  val map2 = stringStateMonad.map2(State.unit(7), State.unit(9.25))((a, b) => a * b)
+  val sequence = stringStateMonad.sequence(List.fill(10)(State.unit("Lol")))
 }
