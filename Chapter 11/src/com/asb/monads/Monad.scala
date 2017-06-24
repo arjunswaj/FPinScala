@@ -88,4 +88,8 @@ object monads {
   val replicate = stringStateMonad.replicateM(5, State.unit("Hello"))
   val map2 = stringStateMonad.map2(State.unit(7), State.unit(9.25))((a, b) => a * b)
   val sequence = stringStateMonad.sequence(List.fill(10)(State.unit("Lol")))
+
+  val F = stateMonad[Int]
+
+  def getState[S]: State[S, S] = State(s => (s, s))
 }
