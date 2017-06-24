@@ -75,3 +75,11 @@ object IntStateMonad extends Monad[({type IntState[A] = State[Int, A]})#IntState
 
   def flatMap[A, B](fa: State[Int, A])(f: (A) => State[Int, B]): State[Int, B] = fa flatMap f
 }
+
+object monads {
+  def stateMonad[S] = new Monad[({type f[x] = State[S, x]})#f] {
+    def unit[A](a: => A): State[S, A] = State(s => (a, s))
+
+    def flatMap[A, B](fa: State[S, A])(f: (A) => State[S, B]): State[S, B] = fa flatMap f
+  }
+}
